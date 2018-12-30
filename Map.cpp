@@ -2,34 +2,56 @@
 
 #include <QQueue>
 #include <QPainter>
+#include <QPixmap>
+#include <QGraphicsPixmapItem>
 
 #include <cmath>
 
+#include "Engine.h"
 #include "Character.h"
 #include "Player.h"
 
 Map::Map(){
-    levelCollision = QVector< QVector<int> > (3);
-    levelCollision[0] = QVector<int> (3);
-    levelCollision[1] = QVector<int> (3);
-    levelCollision[2] = QVector<int> (3);
+    levelCollision = QVector< QVector<int> > (10);
+    for(int i = 0; i < 10; i++)
+        levelCollision[i] = QVector<int> (10);
+    /*levelCollision[1] = QVector<int> (5);
+    levelCollision[2] = QVector<int> (5);
+    levelCollision[3] = QVector<int> (5);
+    levelCollision[4] = QVector<int> (5);*/
 
-    charCollision = QVector< QVector<int> > (3);
-    charCollision[0] = QVector<int> (3);
-    charCollision[1] = QVector<int> (3);
-    charCollision[2] = QVector<int> (3);
+    charCollision = QVector< QVector<int> > (10);
+    for(int i = 0; i < 10; i++)
+        charCollision[i] = QVector<int> (10);
+    /*charCollision[1] = QVector<int> (5);
+    charCollision[2] = QVector<int> (5);
+    charCollision[3] = QVector<int> (5);
+    charCollision[4] = QVector<int> (5);*/
 
     levelCollision[0][0] = 1;
     levelCollision[1][0] = 1;
+    levelCollision[3][5] = 1;
+    levelCollision[3][6] = 1;
+    levelCollision[3][7] = 1;
+    levelCollision[4][8] = 1;
+    levelCollision[5][8] = 1;
+    levelCollision[5][6] = 1;
 
     for(int i = 0; i < levelCollision.length(); i++)
         for(int j = 0; j < levelCollision[i].length(); j++)
-            if(levelCollision[i][j])
-                this->addRect(mapToScene(matrixToMap(i, j) + QVector2D(0.5, 0.5)).x() - 10, mapToScene(matrixToMap(i, j) + QVector2D(0.5, 0.5)).y() - 10, 20, 20);
-            else
-                this->addRect(mapToScene(matrixToMap(i, j) + QVector2D(0.5, 0.5)).x() - 10, mapToScene(matrixToMap(i, j) + QVector2D(0.5, 0.5)).y() - 10, 20, 20);
+            {//if(levelCollision[i][j]){
+                this->addRect(mapToScene(matrixToMap(i, j)).x() - 5, mapToScene(matrixToMap(i, j)).y() - 5, 10, 10)->setBrush(Qt::black);
+            //}
+                //this->addRect(mapToScene(matrixToMap(i, j) + QVector2D(0.5, 0.5)).x() - 5, mapToScene(matrixToMap(i, j) + QVector2D(0.5, 0.5)).y() - 5, 10, 10)->setBrush(Qt::black);
+            if(!levelCollision[i][j]) {
+                QGraphicsPixmapItem* pic = this->addPixmap(Engine::getInstance().getAssetTiles(0));
+                pic->setOffset(-37, -19);
+                pic->setPos(mapToScene(matrixToMap(i, j)).x(), mapToScene(matrixToMap(i, j)).y());
+                //pic->setZValue(-1);
+            }}
+                //this->addRect(mapToScene(matrixToMap(i, j) + QVector2D(0.5, 0.5)).x() - 5, mapToScene(matrixToMap(i, j) + QVector2D(0.5, 0.5)).y() - 5, 10, 10);
 
-    charCollision[2][0] = 1;
+    charCollision[1][1] = 1;
 }
 
 void Map::setPlayer(Player* p) {
@@ -50,7 +72,7 @@ QVector2D Map::mapToScene(QVector2D worldCoords){
     float y = 0.5 * (translate.x() + translate.y())/sqrt(2);
     QVector2D vektor = QVector2D(x, y);
 
-    vektor *= 100;
+    vektor *= 50;
 
     return  vektor + sceneCenter;
 }
@@ -66,17 +88,17 @@ QVector2D Map::sceneToMap(QVector2D sceneCoords){
 
     QVector2D vektor = QVector2D(x, y);
 
-    vektor *= 0.01;
+    vektor *= 0.02;
 
     return vektor + cameraPos;
 }
 
 QVector2D Map::matrixToMap(int i, int j){
-    return QVector2D(j, i);
+    return QVector2D(j + 0.5, i + 0.5);
 }
 
 QPair<int, int> Map::mapToMatrix(QVector2D worldCoords){
-    return QPair<int, int>(worldCoords.y(), worldCoords.x());
+    return QPair<int, int>(worldCoords.y() - 0.5, worldCoords.x() - 0.5);
 }
 
 void Map::moveCharacter(Character &ch, int destX, int destY){
@@ -128,9 +150,9 @@ QPair<int, int> Map::findPath(Character& ch, int destI, int destJ){
                 bool noCollision = true;
                 for(int nexti = next.first + i; nexti < next.first + width + i; nexti++)
                     for(int nextj = next.second + j; nextj < next.second + width + j; nextj++)
-                        if(!exists(nexti, nextj) || dist[nexti][nextj] != -2)
+                        if(!exists(nexti, nextj) || dist[nexti][nextj] == -1)
                             noCollision = false;
-                if(noCollision){
+                if(noCollision && dist[next.first + i][next.second + j] == -2){
                     dist[next.first + i][next.second + j] = dist[next.first][next.second] + 1;
                     q.enqueue(QPair<int, int>(next.first + i, next.second + j));
                 }
@@ -146,15 +168,17 @@ QPair<int, int> Map::findPath(Character& ch, int destI, int destJ){
     while(dist[destI][destJ] != 1){
         int nextI = destI;
         int nextJ = destJ;
-        for(int i = -1; i <= 1; i++)
-            for(int j = -1; j <= 1; j++){
-                int tempI = destI + i;
-                int tempJ = destJ + j;
-                if(exists(tempI, tempJ) && dist[tempI][tempJ] == dist[destI][destJ] - 1){
-                    nextI = tempI;
-                    nextJ = tempJ;
-                }
-             }
+        for(int t = 1, c = 0; c < 9; t = (t + 2) % 9, c++) {
+            int i = t % 3 - 1;
+            int j = t / 3 - 1;
+            int tempI = destI + i;
+            int tempJ = destJ + j;
+            if(exists(tempI, tempJ) && dist[tempI][tempJ] == dist[destI][destJ] - 1){
+                nextI = tempI;
+                nextJ = tempJ;
+                break;
+            }
+         }
         destI = nextI;
         destJ = nextJ;
     }

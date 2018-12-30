@@ -25,6 +25,7 @@ public:
 private:
     QVector< QVector<int> > levelCollision;
     QVector< QVector<int> > charCollision;
+    QVector< QVector<int> > texMap;
 
     Player* player;
 };

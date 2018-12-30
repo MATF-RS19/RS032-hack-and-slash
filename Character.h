@@ -1,19 +1,20 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
-#include <QGraphicsRectItem>
+#include <QGraphicsPixmapItem>
 #include <QVector2D>
 #include <QPair>
 #include <QVector>
 
 #include "Map.h"
+#include "Animator.h"
 
-class Map;
+class Camera;
 
-class Character : public QGraphicsRectItem{
+class Character : public QGraphicsPixmapItem{
 public:
-    Character(Map* world, int coordX, int coordY, int height, int weight);
-    void update(int deltaT);
+    Character(Map* world, int coordX, int coordY, int height, int width, Animator animator);
+    virtual void update(int deltaT);
     int getI();
     int getJ();
     int getSize();
@@ -36,6 +37,8 @@ protected:
         ready
     };
     State charState;
+
+    Animator animator;
 };
 
 

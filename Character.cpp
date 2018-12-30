@@ -1,12 +1,18 @@
 #include "Character.h"
 
 #include <QDebug>
+#include <QPointF>
+#include <QVector2D>
 
-Character::Character(Map* world, int coordX, int coordY, int height, int weight) : QGraphicsRectItem(coordX, coordY, height, weight) {
+Character::Character(Map* world, int coordI, int coordJ, int offsetX, int offsetY, Animator animator) : QGraphicsPixmapItem (){
+    this->setPixmap(animator.getCurrentFrame());
+
     this->world = world;
 
-    worldCoords = QVector2D(1, 1);
-    nextCellCoords = QVector2D(1, 1);
+    this->animator = animator;
+
+    worldCoords = world->matrixToMap(coordI, coordJ);
+    nextCellCoords = world->matrixToMap(coordI, coordJ);
     movementSpeed = 0.001f;
 
     charState = ready;
@@ -18,9 +24,40 @@ Character::Character(Map* world, int coordX, int coordY, int height, int weight)
     destJ = 1;
 
     size = 1;
+
+    setOffset(-offsetX, -offsetY);
+    QVector2D pos = world->mapToScene(worldCoords);
+    setPos(pos.x(), pos.y());
 }
 
 void Character::update(int deltaT){
+    if(charState == moving || destI != mapI || destJ != mapJ){
+        QVector2D direction(world->mapToScene(nextCellCoords) - world->mapToScene(worldCoords));
+        direction.normalize();
+        if((direction - QVector2D(1, 0)).length() < 0.01)
+            animator.setCurrentAnimation(1);
+        if((direction - QVector2D(0.7, 0.7)).length() < 0.5)
+            animator.setCurrentAnimation(3);
+        if((direction - QVector2D(0, 1)).length() < 0.01)
+            animator.setCurrentAnimation(5);
+        if((direction - QVector2D(-0.7, 0.7)).length() < 0.5)
+            animator.setCurrentAnimation(7);
+        if((direction - QVector2D(-1, 0)).length() < 0.01)
+            animator.setCurrentAnimation(9);
+        if((direction - QVector2D(-0.7, -0.7)).length() < 0.5)
+            animator.setCurrentAnimation(11);
+        if((direction - QVector2D(0, -1)).length() < 0.01)
+            animator.setCurrentAnimation(13);
+        if((direction - QVector2D(0.7, -0.7)).length() < 0.5)
+            animator.setCurrentAnimation(15);
+    }
+    else if(charState == ready){
+        animator.setCurrentAnimation(0);
+    }
+    animator.update(deltaT);
+    QPixmap frame = animator.getCurrentFrame();
+    this->setPixmap(frame);
+
     if(charState == moving){
         QVector2D v(nextCellCoords - worldCoords);
         if(v.length() < movementSpeed * deltaT * 2) {
@@ -45,7 +82,7 @@ void Character::update(int deltaT){
         }
     }
 
-    QVector2D sceneCoords = this->world->mapToScene(worldCoords + QVector2D(0.5, 0.5)) - QVector2D(50, 59);
+    QVector2D sceneCoords = this->world->mapToScene(worldCoords);
     setPos(sceneCoords.x(), sceneCoords.y());
 }
 
@@ -63,6 +100,8 @@ int Character::getSize(){
 }
 
 void Character::setDestination(int i, int j) {
-    destI = i;
-    destJ = j;
+    if(world->exists(i, j)){
+        destI = i;
+        destJ = j;
+    }
 }

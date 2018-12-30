@@ -5,11 +5,22 @@
 #include <QGraphicsRectItem>
 
 #include "Character.h"
+#include "Camera.h"
 
 class Player : public Character{
 public:
-    Player(Map* m, int x, int y, int w, int h) : Character(m,x,y,w,h) {}
+
+    Player(Map* m, int x, int y, int w, int h, Animator anim) : Character(m, x, y, w, h, anim) {}
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+    PositionX checkPositionX(float destX, float destY);
+    PositionY checkPositionY(float destX, float destY);
+    void update(int deltaT) override;
+    void setCam(Camera* camera);
+
+private:
+     Camera* cam;
+     PositionX posX;
+     PositionY posY;
 };
 
 

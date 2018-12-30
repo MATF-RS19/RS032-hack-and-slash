@@ -17,13 +17,18 @@ SOURCES += main.cpp \
     Character.cpp \
     Map.cpp \
     Engine.cpp \
-    Camera.cpp
+    Camera.cpp \
+    Animator.cpp
 
 HEADERS  += \
     Player.h \
     Character.h \
     Map.h \
     Engine.h \
-    Camera.h
+    Camera.h \
+    Animator.h
 
 FORMS    +=
+
+RESOURCES += \
+    assets.qrc

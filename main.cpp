@@ -6,8 +6,8 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    Engine* engine = new Engine();
-    engine->run();
+    Engine& engine = Engine::getInstance();
+    engine.run();
 
     return a.exec();
 }
