@@ -10,17 +10,13 @@
 class Player : public Character{
 public:
 
-    Player(Map* m, int x, int y, Animator anim) : Character(m, x, y, anim) {}
+    Player(Map* m, float speed, int size, int x, int y, Animator anim) : Character(m, speed, size, x, y, anim) {}
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
-    PositionX checkPositionX(float destX, float destY);
-    PositionY checkPositionY(float destX, float destY);
     void update(int deltaT) override;
     void setCam(Camera* camera);
 
 private:
      Camera* cam;
-     PositionX posX;
-     PositionY posY;
 };
 
 

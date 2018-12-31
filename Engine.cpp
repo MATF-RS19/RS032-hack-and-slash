@@ -36,9 +36,7 @@ void Engine::run() {
 
     while(!fileAnim.atEnd()){
         QString line = fileAnim.readLine();
-        //qDebug() << line;
         QStringList args = line.split(" ");
-        qDebug() << args;
         QString name = args[0];
         int dimX = args[1].toInt();
         int dimY = args[2].toInt();
@@ -52,7 +50,6 @@ void Engine::run() {
         assetsAnims.push_back(Animator(QPixmap(name).scaled(frameWidth * dimX, frameHeight * dimY, Qt::IgnoreAspectRatio, Qt::SmoothTransformation), dimX, dimY, offsetX, offsetY));
         for(int i = 0; i < distinctCount; i++){
             line = fileAnim.readLine();
-            //qDebug() << line;
             args = line.split(" ");
             int begin = args[0].toInt();
             int end = args[1].toInt();
@@ -91,6 +88,24 @@ void Engine::run() {
 
     fileEnv.close();
 
+    QFile fileChar(":/Assets/chars.hsa");
+    fileChar.open(QIODevice::ReadOnly | QIODevice::Text);
+
+    while(!fileChar.atEnd()){
+        QString line = fileChar.readLine().trimmed();
+        QStringList args = line.split(" ");
+        int animIndex = args[0].toInt();
+        int size = args[1].toInt();
+        float speed = args[2].toFloat();
+        int aggroRange = 0;
+        int deaggroRange = 0;
+        if(args.size() == 5){
+            aggroRange = args[3].toInt();
+            deaggroRange = args[4].toInt();
+        }
+        charTemplates.push_back(CharTemplate(animIndex, size, speed, aggroRange, deaggroRange));
+    }
+
     m = new Map(":Levels/test.hsl");
 
     cam = new Camera(m, 20, 20);
@@ -101,12 +116,12 @@ void Engine::run() {
     cam->setFixedSize(1920, 1080);
     m->setSceneRect(-1920/2, -1080/2, 1920, 1080);
 
-    ch = new Player(m, 1, 1, assetsAnims[0]);
+    //ch = new Player(m, 1, 1, 1, assetsAnims[0]);
 
-    m->setPlayer(ch);
-    m->addItem(ch);
+    //m->setPlayer(ch);
+    //m->addItem(ch);
 
-    ch->setCam(cam);
+    m->setCam(cam);
 
     QTimer* timer = new QTimer();
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -130,4 +145,12 @@ void Engine::update() {
     m->update(10);
 
     //scene->update();
+}
+
+CharTemplate Engine::getTemplate(int i){
+    return charTemplates[i];
+}
+
+Animator Engine::getAssetAnim(int i){
+    return assetsAnims[i];
 }

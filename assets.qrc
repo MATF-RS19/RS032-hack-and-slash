@@ -12,5 +12,6 @@
         <file>Assets/env.hsa</file>
         <file>Assets/tiles.hsa</file>
         <file>Assets/Environment/Campfire.png</file>
+        <file>Assets/chars.hsa</file>
     </qresource>
 </RCC>

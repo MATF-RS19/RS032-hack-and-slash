@@ -10,6 +10,8 @@
 class Character;
 class Player;
 class AnimatedItem;
+class Enemy;
+class Camera;
 
 class Map : public QGraphicsScene{
 public:
@@ -24,6 +26,8 @@ public:
     void setPlayer(Player* p);
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
     void update(int deltaT);
+    QPair<int, int> getPlayerPos();
+    void setCam(Camera* camera);
 
 private:
     QVector< QVector<int> > levelCollision;
@@ -31,6 +35,7 @@ private:
     QVector< QVector<int> > texMap;
 
     Player* player;
+    QVector< Enemy* > enemies;
     QVector< AnimatedItem* > envItems;
 };
 

@@ -6,11 +6,15 @@
 #include <QGraphicsView>
 #include <QPixmap>
 
+#include <tuple>
+
 #include "Map.h"
 #include "Character.h"
 #include "Player.h"
 #include "Camera.h"
 #include "Animator.h"
+
+struct CharTemplate;
 
 class Engine : public QObject {
     Q_OBJECT
@@ -19,6 +23,8 @@ public:
     void run();
     QPixmap getAssetTiles(int i);
     Animator getAssetEnv(int i);
+    CharTemplate getTemplate(int i);
+    Animator getAssetAnim(int i);
 
     Engine(Engine const&) = delete;
     void operator = (Engine const&) = delete;
@@ -32,9 +38,27 @@ private:
     Map* m;
     Player* ch;
     Camera* cam;
+    QVector<CharTemplate> charTemplates;
     QVector<QPixmap> assetsTiles;
     QVector<Animator> assetsAnims;
     QVector<Animator> assetsEnv;
+};
+
+struct CharTemplate{
+    CharTemplate() {}
+    CharTemplate(int animIndex, int size, float speed, int aggroRange = 0, int deaggroRange = 0){
+        this->animIndex = animIndex;
+        this->size = size;
+        this->speed = speed;
+        this->aggroRange = aggroRange;
+        this->deaggroRange = deaggroRange;
+    }
+
+    int animIndex = 0;
+    int size = 0;
+    float speed = 0;
+    int aggroRange = 0;
+    int deaggroRange = 0;
 };
 
 #endif // ENGINE_H

@@ -4,7 +4,7 @@
 #include <QPointF>
 #include <QVector2D>
 
-Character::Character(Map* world, int coordI, int coordJ, Animator animator) : QGraphicsPixmapItem (){
+Character::Character(Map* world, float speed, int size, int coordI, int coordJ, Animator animator) : QGraphicsPixmapItem (){
     this->setPixmap(animator.getCurrentFrame());
 
     this->world = world;
@@ -13,17 +13,17 @@ Character::Character(Map* world, int coordI, int coordJ, Animator animator) : QG
 
     worldCoords = world->matrixToMap(coordI, coordJ);
     nextCellCoords = world->matrixToMap(coordI, coordJ);
-    movementSpeed = 0.001f;
+    movementSpeed = speed;
 
     charState = ready;
 
-    mapI = 1;
-    mapJ = 1;
+    mapI = coordI;
+    mapJ = coordJ;
 
-    destI = 1;
-    destJ = 1;
+    destI = coordI;
+    destJ = coordJ;
 
-    size = 1;
+    this->size = size;
 
     setOffset(-animator.getOffsetX(), -animator.getOffsetY());
     QVector2D pos = world->mapToScene(worldCoords);
@@ -79,6 +79,13 @@ void Character::update(int deltaT){
                 mapJ = nextCell.second;
                 charState = moving;
                 nextCellCoords = world->matrixToMap(nextCell.first, nextCell.second);
+            }
+            else {
+                // ovo mozda valja ukloniti kasnije
+                // ovo za sada radi tako da ako nema puta za dalje, zaustavlja se
+                // umesto da ceka da se put otvori i da nastavi dalje
+                destI = mapI;
+                destJ = mapJ;
             }
         }
     }

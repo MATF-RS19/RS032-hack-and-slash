@@ -13,12 +13,11 @@
 #include "Character.h"
 #include "Player.h"
 #include "AnimatedItem.h"
+#include "Enemy.h"
 
 Map::Map(QString levelName){
     QFile file(levelName);
     file.open(QIODevice::ReadOnly | QIODevice::Text);
-
-    qDebug() << file.fileName();
 
     QString line = file.readLine();
     QStringList list = line.split(" ");
@@ -31,13 +30,11 @@ Map::Map(QString levelName){
     for(int i = 0; i < m; i++){
         QString line = file.readLine();
         QStringList list = line.split(" ");
-        qDebug() << list;
         for(int j = 0; j < n; j++){
             int x = list.at(j).toInt();
             levelCollision[i].push_back(x);
         }
     }
-
 
     for(int i = 0; i < m; i++){
         QString line = file.readLine();
@@ -60,9 +57,32 @@ Map::Map(QString levelName){
         }
     }
 
+
     charCollision = QVector< QVector<int> > (m);
     for(int i = 0; i < m; i++)
         charCollision[i] = QVector<int> (n);
+
+    for(int i = 0; i < m; i++){
+        QString line = file.readLine();
+        QStringList list = line.split(" ");
+        for(int j = 0; j < n; j++){
+            int x = list.at(j).toInt();
+            if(x == 1){
+                CharTemplate character = Engine::getInstance().getTemplate(0);
+                player = new Player(this, character.speed, character.size, i, j, Engine::getInstance().getAssetAnim(character.animIndex));
+                addItem(player);
+                charCollision[i][j] = 1;
+            }
+            else if(x > 1){
+                CharTemplate character = Engine::getInstance().getTemplate(x);
+                enemies.push_back(new Enemy(this, character.speed, character.size, QVector< QPair<int, int> >{QPair<int, int>(i, j)}, character.aggroRange, character.deaggroRange, Engine::getInstance().getAssetAnim(character.animIndex)));
+                addItem(enemies[enemies.size() - 1]);
+                for(int k = 0; k < character.size; k++)
+                    for(int l = 0; l < character.size; l++)
+                        charCollision[i + k][j + l] = 1;
+            }
+        }
+    }
 
     for(int i = 0; i < texMap.length(); i++)
         for(int j = 0; j < texMap[i].length(); j++){
@@ -71,8 +91,10 @@ Map::Map(QString levelName){
             pic->setPos(mapToScene(matrixToMap(i, j)).x(), mapToScene(matrixToMap(i, j)).y());
             pic->setZValue(-1);
         }
+}
 
-    charCollision[1][1] = 1;
+QPair<int, int> Map::getPlayerPos(){
+    return QPair<int, int>(player->getI(), player->getJ());
 }
 
 void Map::setPlayer(Player* p) {
@@ -122,6 +144,10 @@ QPair<int, int> Map::mapToMatrix(QVector2D worldCoords){
     return QPair<int, int>(worldCoords.y() - 0.5, worldCoords.x() - 0.5);
 }
 
+void Map::setCam(Camera *camera){
+    this->player->setCam(camera);
+}
+
 void Map::moveCharacter(Character &ch, int destX, int destY){
     int starti = ch.getI();
     int startj = ch.getJ();
@@ -138,6 +164,8 @@ void Map::moveCharacter(Character &ch, int destX, int destY){
 
 void Map::update(int deltaT){
     player->update(deltaT);
+    for(int i = 0; i < enemies.size(); i++)
+        enemies[i]->update(deltaT);
     for(int i = 0; i < envItems.size(); i++)
         envItems[i]->update(deltaT);
 }
@@ -188,8 +216,28 @@ QPair<int, int> Map::findPath(Character& ch, int destI, int destJ){
              }
     }
 
-    if(dist[destI][destJ] <= 0)
+    if(dist[destI][destJ] == 0)
         return QPair<int, int>(ch.getI(), ch.getJ());
+
+    if(dist[destI][destJ] < 0){
+        bool indicator = false;
+        int min;
+        for(int i = -1; i <= 1; i++){
+            for(int j = -1; j <= 1; j++){
+                if(exists(destI + i, destJ + j) && dist[destI + i][destJ + j] >= 0){
+                    if(!indicator) {
+                        min = dist[destI + i][destJ + j];
+                        indicator = true;
+                    }
+                    else if(min > dist[destI + i][destJ + j])
+                        min = dist[destI + i][destJ + j];
+                }
+            }
+        }
+        if(!indicator || min == 0)
+            return QPair<int, int>(ch.getI(), ch.getJ());
+        dist[destI][destJ] = min + 1;
+    }
 
     // Idemo od kraja:
     while(dist[destI][destJ] != 1){
