@@ -18,7 +18,8 @@ SOURCES += main.cpp \
     Map.cpp \
     Engine.cpp \
     Camera.cpp \
-    Animator.cpp
+    Animator.cpp \
+    AnimatedItem.cpp
 
 HEADERS  += \
     Player.h \
@@ -26,7 +27,8 @@ HEADERS  += \
     Map.h \
     Engine.h \
     Camera.h \
-    Animator.h
+    Animator.h \
+    AnimatedItem.h
 
 FORMS    +=
 

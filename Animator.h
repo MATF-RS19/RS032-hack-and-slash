@@ -7,11 +7,17 @@
 class Animator{
 public:
     Animator(){}
-    Animator(QPixmap frames, int x, int y);
+    Animator(QPixmap frames, int x, int y, int offsetX, int offsetY);
+    Animator(QPixmap frames, int x, int y)
+        : Animator(frames, x, y, (frames.width()/x)/2, frames.height()/y - 10)
+    {}
     void setCurrentAnimation(int i);
     void update(int deltaT);
     QPixmap getCurrentFrame();
     void addAnimation(int start, int end, int duration, bool looping);
+    int getOffsetX();
+    int getOffsetY();
+    bool isAnimated();
 
 private:
     QPixmap frames;
@@ -26,7 +32,7 @@ private:
         bool looping;
     };
     int currentAnimation;
-
+    int offsetX, offsetY;
     QVector<Animation> animations;
 };
 

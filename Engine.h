@@ -18,6 +18,7 @@ public:
     static Engine& getInstance();
     void run();
     QPixmap getAssetTiles(int i);
+    Animator getAssetEnv(int i);
 
     Engine(Engine const&) = delete;
     void operator = (Engine const&) = delete;
@@ -33,6 +34,7 @@ private:
     Camera* cam;
     QVector<QPixmap> assetsTiles;
     QVector<Animator> assetsAnims;
+    QVector<Animator> assetsEnv;
 };
 
 #endif // ENGINE_H

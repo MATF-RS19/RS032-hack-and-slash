@@ -1,9 +1,11 @@
 #include <Animator.h>
 
-Animator::Animator(QPixmap frames, int x, int y){
+Animator::Animator(QPixmap frames, int x, int y, int offsetX, int offsetY){
     this->frames = frames;
     dimension = QPair<int, int>(x, y);
     currentAnimation = 0;
+    this->offsetX = offsetX;
+    this->offsetY = offsetY;
 }
 
 void Animator::addAnimation(int start, int end, int duration, bool looping){
@@ -43,6 +45,18 @@ void Animator::setCurrentAnimation(int i){
 void Animator::update(int deltaT){
     if(!animations[currentAnimation].nextFrame(deltaT))
         setCurrentAnimation(0);
+}
+
+bool Animator::isAnimated(){
+    return animations[currentAnimation].duration;
+}
+
+int Animator::getOffsetX(){
+    return offsetX;
+}
+
+int Animator::getOffsetY(){
+    return offsetY;
 }
 
 QPixmap Animator::getCurrentFrame(){

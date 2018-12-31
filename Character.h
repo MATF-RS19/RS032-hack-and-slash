@@ -13,7 +13,7 @@ class Camera;
 
 class Character : public QGraphicsPixmapItem{
 public:
-    Character(Map* world, int coordX, int coordY, int height, int width, Animator animator);
+    Character(Map* world, int coordI, int coordJ, Animator animator);
     virtual void update(int deltaT);
     int getI();
     int getJ();

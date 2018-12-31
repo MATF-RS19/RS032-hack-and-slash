@@ -1,9 +1,16 @@
 <RCC>
     <qresource prefix="/">
-        <file>Assets/1.png</file>
-        <file>Assets/2.png</file>
-        <file>Assets/Plava kocka.png</file>
-        <file>Assets/Sivakocka.png</file>
-        <file>Assets/CharacterAsset8x58.png</file>
+        <file>Assets/Animations/CharacterAsset8x58.png</file>
+        <file>Assets/Environment/hemlock_pine.png</file>
+        <file>Assets/Environment/lebanon_cedar.png</file>
+        <file>Assets/Environment/stone_pine.png</file>
+        <file>Assets/Tiles/Plava kocka.png</file>
+        <file>Assets/Tiles/Plavakocka.png</file>
+        <file>Assets/Tiles/Sivakocka.png</file>
+        <file>Levels/test.hsl</file>
+        <file>Assets/anim.hsa</file>
+        <file>Assets/env.hsa</file>
+        <file>Assets/tiles.hsa</file>
+        <file>Assets/Environment/Campfire.png</file>
     </qresource>
 </RCC>

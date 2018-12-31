@@ -4,7 +4,7 @@
 #include <QPointF>
 #include <QVector2D>
 
-Character::Character(Map* world, int coordI, int coordJ, int offsetX, int offsetY, Animator animator) : QGraphicsPixmapItem (){
+Character::Character(Map* world, int coordI, int coordJ, Animator animator) : QGraphicsPixmapItem (){
     this->setPixmap(animator.getCurrentFrame());
 
     this->world = world;
@@ -25,29 +25,30 @@ Character::Character(Map* world, int coordI, int coordJ, int offsetX, int offset
 
     size = 1;
 
-    setOffset(-offsetX, -offsetY);
+    setOffset(-animator.getOffsetX(), -animator.getOffsetY());
     QVector2D pos = world->mapToScene(worldCoords);
     setPos(pos.x(), pos.y());
 }
 
 void Character::update(int deltaT){
+    setZValue(mapI + mapJ);
     if(charState == moving || destI != mapI || destJ != mapJ){
         QVector2D direction(world->mapToScene(nextCellCoords) - world->mapToScene(worldCoords));
         direction.normalize();
         if((direction - QVector2D(1, 0)).length() < 0.01)
-            animator.setCurrentAnimation(1);
+            animator.setCurrentAnimation(8);
         if((direction - QVector2D(0.7, 0.7)).length() < 0.5)
-            animator.setCurrentAnimation(3);
-        if((direction - QVector2D(0, 1)).length() < 0.01)
-            animator.setCurrentAnimation(5);
-        if((direction - QVector2D(-0.7, 0.7)).length() < 0.5)
-            animator.setCurrentAnimation(7);
-        if((direction - QVector2D(-1, 0)).length() < 0.01)
             animator.setCurrentAnimation(9);
-        if((direction - QVector2D(-0.7, -0.7)).length() < 0.5)
+        if((direction - QVector2D(0, 1)).length() < 0.01)
+            animator.setCurrentAnimation(10);
+        if((direction - QVector2D(-0.7, 0.7)).length() < 0.5)
             animator.setCurrentAnimation(11);
-        if((direction - QVector2D(0, -1)).length() < 0.01)
+        if((direction - QVector2D(-1, 0)).length() < 0.01)
+            animator.setCurrentAnimation(12);
+        if((direction - QVector2D(-0.7, -0.7)).length() < 0.5)
             animator.setCurrentAnimation(13);
+        if((direction - QVector2D(0, -1)).length() < 0.01)
+            animator.setCurrentAnimation(14);
         if((direction - QVector2D(0.7, -0.7)).length() < 0.5)
             animator.setCurrentAnimation(15);
     }

@@ -10,7 +10,7 @@
 class Player : public Character{
 public:
 
-    Player(Map* m, int x, int y, int w, int h, Animator anim) : Character(m, x, y, w, h, anim) {}
+    Player(Map* m, int x, int y, Animator anim) : Character(m, x, y, anim) {}
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
     PositionX checkPositionX(float destX, float destY);
     PositionY checkPositionY(float destX, float destY);

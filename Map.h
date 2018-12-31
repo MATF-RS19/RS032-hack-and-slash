@@ -5,13 +5,15 @@
 #include <QVector>
 #include <QVector2D>
 #include <QPair>
+#include <QString>
 
 class Character;
 class Player;
+class AnimatedItem;
 
 class Map : public QGraphicsScene{
 public:
-    Map();
+    Map(QString levelName);
     QPair<int, int> findPath(Character& ch, int destX, int destY);
     bool exists(int i, int j);
     void moveCharacter(Character& ch, int destX, int destY);
@@ -21,6 +23,7 @@ public:
     QPair<int, int> mapToMatrix(QVector2D worldCoords);
     void setPlayer(Player* p);
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+    void update(int deltaT);
 
 private:
     QVector< QVector<int> > levelCollision;
@@ -28,6 +31,7 @@ private:
     QVector< QVector<int> > texMap;
 
     Player* player;
+    QVector< AnimatedItem* > envItems;
 };
 
 #endif // MAP_H

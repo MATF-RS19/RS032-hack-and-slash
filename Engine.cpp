@@ -5,27 +5,93 @@
 #include <QTimer>
 #include <QTransform>
 #include <QDebug>
+#include <QFile>
 
 #include "Map.h"
 #include "Character.h"
 #include "Animator.h"
 
 void Engine::run() {
-    assetsTiles = {QPixmap(":/Assets/Sivakocka.png")};
-    assetsTiles[0] = assetsTiles[0].scaled(50, 50, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    QFile fileTiles(":/Assets/tiles.hsa");
+    fileTiles.open(QIODevice::ReadOnly | QIODevice::Text);
+
+    while(!fileTiles.atEnd()){
+        QString line = fileTiles.readLine();
+        assetsTiles.push_back(QPixmap(line.trimmed()));
+    }
+
+    fileTiles.close();
+
     QTransform transform;
     transform.scale(1.04, 0.52);
     transform.rotate(-45);
 
-    assetsTiles[0] = assetsTiles[0].transformed(transform);
-
-    assetsAnims = {Animator(QPixmap(":/Assets/CharacterAsset8x58.png").scaled(5800*1.8,800*1.8, Qt::KeepAspectRatio,Qt::SmoothTransformation), 58, 8)};
-    for(int i = 0; i < 8; i++) {
-        assetsAnims[0].addAnimation(58 * i + 27, 58 * i + 39, 60, true);
-        assetsAnims[0].addAnimation(58 * i + 0, 58 * i + 15, 60, true);
+    for(int i = 0; i < assetsTiles.size(); i++){
+        assetsTiles[i] = assetsTiles[i].scaled(50, 50, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        assetsTiles[i] = assetsTiles[i].transformed(transform);
     }
 
-    m = new Map();
+    QFile fileAnim(":/Assets/anim.hsa");
+    fileAnim.open(QIODevice::ReadOnly | QIODevice::Text);
+
+    while(!fileAnim.atEnd()){
+        QString line = fileAnim.readLine();
+        //qDebug() << line;
+        QStringList args = line.split(" ");
+        qDebug() << args;
+        QString name = args[0];
+        int dimX = args[1].toInt();
+        int dimY = args[2].toInt();
+        int frameWidth = args[3].toInt();
+        int frameHeight = args[4].toInt();
+        int offsetX = args[5].toInt();
+        int offsetY = args[6].toInt();
+        int animCount = args[7].toInt();
+        int distinctCount = args[8].toInt();
+
+        assetsAnims.push_back(Animator(QPixmap(name).scaled(frameWidth * dimX, frameHeight * dimY, Qt::IgnoreAspectRatio, Qt::SmoothTransformation), dimX, dimY, offsetX, offsetY));
+        for(int i = 0; i < distinctCount; i++){
+            line = fileAnim.readLine();
+            //qDebug() << line;
+            args = line.split(" ");
+            int begin = args[0].toInt();
+            int end = args[1].toInt();
+            int duration = args[2].toInt();
+            bool looping = args[3].toInt();
+
+            for(int j = 0; j < animCount/distinctCount; j++)
+                assetsAnims[assetsAnims.size()-1].addAnimation(dimX * j + begin, dimX * j + end, duration, looping);
+        }
+    }
+
+    fileAnim.close();
+
+    QFile fileEnv(":/Assets/env.hsa");
+    fileEnv.open(QIODevice::ReadOnly | QIODevice::Text);
+
+    while(!fileEnv.atEnd()){
+        QString line = fileEnv.readLine().trimmed();
+        QStringList args = line.split(" ");
+        QString name = args[0];
+        int dimX = args[1].toInt();
+        int dimY = args[2].toInt();
+        int width = args[3].toInt();
+        int begin = args[4].toInt();
+        int end = args[5].toInt();
+        int duration = args[6].toInt();
+        if(args.size() == 7)
+            assetsEnv.push_back(Animator(QPixmap(name).scaledToWidth(width * dimX, Qt::SmoothTransformation), dimX, dimY));
+        if(args.size() == 9){
+            int offsetX = args[7].toInt();
+            int offsetY = args[8].toInt();
+            assetsEnv.push_back(Animator(QPixmap(name).scaledToWidth(width * dimX, Qt::SmoothTransformation), dimX, dimY, offsetX, offsetY));
+        }
+        assetsEnv[assetsEnv.size() - 1].addAnimation(begin, end, duration, true);
+    }
+
+    fileEnv.close();
+
+    m = new Map(":Levels/test.hsl");
 
     cam = new Camera(m, 20, 20);
 
@@ -35,7 +101,7 @@ void Engine::run() {
     cam->setFixedSize(1920, 1080);
     m->setSceneRect(-1920/2, -1080/2, 1920, 1080);
 
-    ch = new Player(m, 1, 1, 50 * 1.8, 60 * 1.8, assetsAnims[0]);
+    ch = new Player(m, 1, 1, assetsAnims[0]);
 
     m->setPlayer(ch);
     m->addItem(ch);
@@ -56,7 +122,12 @@ QPixmap Engine::getAssetTiles(int i){
     return assetsTiles[i];
 }
 
+Animator Engine::getAssetEnv(int i){
+    return assetsEnv[i];
+}
+
 void Engine::update() {
-    ch->update(10);
+    m->update(10);
+
     //scene->update();
 }

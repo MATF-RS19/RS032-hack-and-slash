@@ -4,52 +4,73 @@
 #include <QPainter>
 #include <QPixmap>
 #include <QGraphicsPixmapItem>
+#include <QFile>
+#include <QDebug>
 
 #include <cmath>
 
 #include "Engine.h"
 #include "Character.h"
 #include "Player.h"
+#include "AnimatedItem.h"
 
-Map::Map(){
-    levelCollision = QVector< QVector<int> > (10);
-    for(int i = 0; i < 10; i++)
-        levelCollision[i] = QVector<int> (10);
-    /*levelCollision[1] = QVector<int> (5);
-    levelCollision[2] = QVector<int> (5);
-    levelCollision[3] = QVector<int> (5);
-    levelCollision[4] = QVector<int> (5);*/
+Map::Map(QString levelName){
+    QFile file(levelName);
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
 
-    charCollision = QVector< QVector<int> > (10);
-    for(int i = 0; i < 10; i++)
-        charCollision[i] = QVector<int> (10);
-    /*charCollision[1] = QVector<int> (5);
-    charCollision[2] = QVector<int> (5);
-    charCollision[3] = QVector<int> (5);
-    charCollision[4] = QVector<int> (5);*/
+    qDebug() << file.fileName();
 
-    levelCollision[0][0] = 1;
-    levelCollision[1][0] = 1;
-    levelCollision[3][5] = 1;
-    levelCollision[3][6] = 1;
-    levelCollision[3][7] = 1;
-    levelCollision[4][8] = 1;
-    levelCollision[5][8] = 1;
-    levelCollision[5][6] = 1;
+    QString line = file.readLine();
+    QStringList list = line.split(" ");
+    int n = list.at(0).toInt();
+    int m = list.at(1).toInt();
 
-    for(int i = 0; i < levelCollision.length(); i++)
-        for(int j = 0; j < levelCollision[i].length(); j++)
-            {//if(levelCollision[i][j]){
-                this->addRect(mapToScene(matrixToMap(i, j)).x() - 5, mapToScene(matrixToMap(i, j)).y() - 5, 10, 10)->setBrush(Qt::black);
-            //}
-                //this->addRect(mapToScene(matrixToMap(i, j) + QVector2D(0.5, 0.5)).x() - 5, mapToScene(matrixToMap(i, j) + QVector2D(0.5, 0.5)).y() - 5, 10, 10)->setBrush(Qt::black);
-            if(!levelCollision[i][j]) {
-                QGraphicsPixmapItem* pic = this->addPixmap(Engine::getInstance().getAssetTiles(0));
-                pic->setOffset(-37, -19);
-                pic->setPos(mapToScene(matrixToMap(i, j)).x(), mapToScene(matrixToMap(i, j)).y());
-                //pic->setZValue(-1);
-            }}
-                //this->addRect(mapToScene(matrixToMap(i, j) + QVector2D(0.5, 0.5)).x() - 5, mapToScene(matrixToMap(i, j) + QVector2D(0.5, 0.5)).y() - 5, 10, 10);
+    levelCollision = QVector< QVector<int> > (m);
+    texMap = QVector< QVector<int> > (m);
+
+    for(int i = 0; i < m; i++){
+        QString line = file.readLine();
+        QStringList list = line.split(" ");
+        qDebug() << list;
+        for(int j = 0; j < n; j++){
+            int x = list.at(j).toInt();
+            levelCollision[i].push_back(x);
+        }
+    }
+
+
+    for(int i = 0; i < m; i++){
+        QString line = file.readLine();
+        QStringList list = line.split(" ");
+        for(int j = 0; j < n; j++){
+            int x = list.at(j).toInt();
+            texMap[i].push_back(x);
+        }
+    }
+
+    for(int i = 0; i < m; i++){
+        QString line = file.readLine();
+        QStringList list = line.split(" ");
+        for(int j = 0; j < n; j++){
+            int x = list.at(j).toInt();
+            if(x){
+                envItems.push_back(new AnimatedItem(Engine::getInstance().getAssetEnv(x - 1), mapToScene(matrixToMap(i, j)).x(), mapToScene(matrixToMap(i, j)).y(), i+j));
+                this->addItem((envItems[envItems.size() - 1]));
+            }
+        }
+    }
+
+    charCollision = QVector< QVector<int> > (m);
+    for(int i = 0; i < m; i++)
+        charCollision[i] = QVector<int> (n);
+
+    for(int i = 0; i < texMap.length(); i++)
+        for(int j = 0; j < texMap[i].length(); j++){
+            QGraphicsPixmapItem* pic = this->addPixmap(Engine::getInstance().getAssetTiles(texMap[i][j]));
+            pic->setOffset(-37, -19);
+            pic->setPos(mapToScene(matrixToMap(i, j)).x(), mapToScene(matrixToMap(i, j)).y());
+            pic->setZValue(-1);
+        }
 
     charCollision[1][1] = 1;
 }
@@ -113,6 +134,12 @@ void Map::moveCharacter(Character &ch, int destX, int destY){
     for(int nexti = destX; nexti < destX + width; nexti++)
         for(int nextj = destY; nextj < destY + width; nextj++)
             charCollision[nexti][nextj] = 1;
+}
+
+void Map::update(int deltaT){
+    player->update(deltaT);
+    for(int i = 0; i < envItems.size(); i++)
+        envItems[i]->update(deltaT);
 }
 
 bool Map::exists(int i, int j){
