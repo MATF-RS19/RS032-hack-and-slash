@@ -19,6 +19,8 @@ public:
     int getJ();
     int getSize();
     void setDestination(int i, int j);
+    void setTarget(Character* target);
+    void orient();
 
 protected:
     Map* world;
@@ -26,6 +28,7 @@ protected:
     QVector2D worldCoords;
     QVector2D nextCellCoords;
     float movementSpeed;
+    int orientation;
 
     int mapI, mapJ;         // koordinate polja matrice
     int destI, destJ;       // tamo gde treba doci
@@ -39,6 +42,8 @@ protected:
     State charState;
 
     Animator animator;
+
+    Character *target = nullptr;
 };
 
 

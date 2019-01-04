@@ -62,25 +62,33 @@ Map::Map(QString levelName){
     for(int i = 0; i < m; i++)
         charCollision[i] = QVector<int> (n);
 
-    for(int i = 0; i < m; i++){
-        QString line = file.readLine();
-        QStringList list = line.split(" ");
-        for(int j = 0; j < n; j++){
-            int x = list.at(j).toInt();
-            if(x == 1){
-                CharTemplate character = Engine::getInstance().getTemplate(0);
-                player = new Player(this, character.speed, character.size, i, j, Engine::getInstance().getAssetAnim(character.animIndex));
-                addItem(player);
-                charCollision[i][j] = 1;
-            }
-            else if(x > 1){
-                CharTemplate character = Engine::getInstance().getTemplate(x);
-                enemies.push_back(new Enemy(this, character.speed, character.size, QVector< QPair<int, int> >{QPair<int, int>(i, j)}, character.aggroRange, character.deaggroRange, Engine::getInstance().getAssetAnim(character.animIndex)));
-                addItem(enemies[enemies.size() - 1]);
-                for(int k = 0; k < character.size; k++)
-                    for(int l = 0; l < character.size; l++)
-                        charCollision[i + k][j + l] = 1;
-            }
+    line = file.readLine().trimmed();
+    int s = line.toInt();
+
+    for(int i = 0; i < s; i++){
+        line = file.readLine().trimmed();
+        list = line.split(" ");
+        int x = list.at(0).toInt();
+        if(x == 1){
+            CharTemplate character = Engine::getInstance().getTemplate(0);
+            int posI = list.at(1).toInt();
+            int posJ = list.at(2).toInt();
+            player = new Player(this, character.speed, character.size, posI, posJ, Engine::getInstance().getAssetAnim(character.animIndex));
+            addItem(player);
+            charCollision[posI][posJ] = 1;
+        }
+        else {
+            CharTemplate character = Engine::getInstance().getTemplate(x);
+            int count = list.at(1).toInt();
+            QVector< QPair<int, int> > route;
+            for(int j = 0; j < count; j++)
+                route.push_back(QPair<int, int>(list.at(2+2*j).toInt(), list.at(3+2*j).toInt()));
+
+            enemies.push_back(new Enemy(this, character.speed, character.size, route, character.aggroRange, character.deaggroRange, Engine::getInstance().getAssetAnim(character.animIndex)));
+            addItem(enemies[enemies.size() - 1]);
+            for(int k = 0; k < character.size; k++)
+                for(int l = 0; l < character.size; l++)
+                    charCollision[route[0].first + k][route[0].second + l] = 1;
         }
     }
 
@@ -93,8 +101,8 @@ Map::Map(QString levelName){
         }
 }
 
-QPair<int, int> Map::getPlayerPos(){
-    return QPair<int, int>(player->getI(), player->getJ());
+Player* Map::getPlayer(){
+    return player;
 }
 
 void Map::setPlayer(Player* p) {
@@ -102,7 +110,15 @@ void Map::setPlayer(Player* p) {
 }
 
 void Map::mousePressEvent(QGraphicsSceneMouseEvent* event) {
-    player->mousePressEvent(event);
+    QGraphicsScene::mousePressEvent(event);
+
+    if(event->button() == Qt::MouseButton::LeftButton){
+        QPointF pressPos = event->buttonDownScenePos(Qt::MouseButton::LeftButton);
+        QPair<int, int> newDest = mapToMatrix(QVector2D(0.5, 0.5) + sceneToMap(QVector2D(pressPos.x(), pressPos.y())));
+        player->setDestination(newDest.first, newDest.second);
+        player->setTarget(nullptr);
+    }
+
 }
 
 QVector2D Map::mapToScene(QVector2D worldCoords){

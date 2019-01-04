@@ -26,7 +26,7 @@ public:
     void setPlayer(Player* p);
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
     void update(int deltaT);
-    QPair<int, int> getPlayerPos();
+    Player* getPlayer();
     void setCam(Camera* camera);
 
 private:

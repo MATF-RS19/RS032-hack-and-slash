@@ -25,6 +25,8 @@ Character::Character(Map* world, float speed, int size, int coordI, int coordJ, 
 
     this->size = size;
 
+    orientation = 0;
+
     setOffset(-animator.getOffsetX(), -animator.getOffsetY());
     QVector2D pos = world->mapToScene(worldCoords);
     setPos(pos.x(), pos.y());
@@ -32,29 +34,13 @@ Character::Character(Map* world, float speed, int size, int coordI, int coordJ, 
 
 void Character::update(int deltaT){
     setZValue(mapI + mapJ);
-    if(charState == moving || destI != mapI || destJ != mapJ){
-        QVector2D direction(world->mapToScene(nextCellCoords) - world->mapToScene(worldCoords));
-        direction.normalize();
-        if((direction - QVector2D(1, 0)).length() < 0.01)
-            animator.setCurrentAnimation(8);
-        if((direction - QVector2D(0.7, 0.7)).length() < 0.5)
-            animator.setCurrentAnimation(9);
-        if((direction - QVector2D(0, 1)).length() < 0.01)
-            animator.setCurrentAnimation(10);
-        if((direction - QVector2D(-0.7, 0.7)).length() < 0.5)
-            animator.setCurrentAnimation(11);
-        if((direction - QVector2D(-1, 0)).length() < 0.01)
-            animator.setCurrentAnimation(12);
-        if((direction - QVector2D(-0.7, -0.7)).length() < 0.5)
-            animator.setCurrentAnimation(13);
-        if((direction - QVector2D(0, -1)).length() < 0.01)
-            animator.setCurrentAnimation(14);
-        if((direction - QVector2D(0.7, -0.7)).length() < 0.5)
-            animator.setCurrentAnimation(15);
-    }
-    else if(charState == ready){
-        animator.setCurrentAnimation(0);
-    }
+
+    orient();
+
+    if(charState == moving)
+        animator.setCurrentAnimation(8 + orientation);
+    else if(charState == ready)
+        animator.setCurrentAnimation(orientation);
     animator.update(deltaT);
     QPixmap frame = animator.getCurrentFrame();
     this->setPixmap(frame);
@@ -70,7 +56,7 @@ void Character::update(int deltaT){
             worldCoords += movementSpeed * deltaT * v;
         }
     }
-    else if(charState == ready){
+    if(charState == ready){
         if(mapI != destI || mapJ != destJ){
             QPair<int, int> nextCell = world->findPath(*this, destI, destJ);
             if(nextCell.first != mapI || nextCell.second != mapJ){
@@ -80,13 +66,6 @@ void Character::update(int deltaT){
                 charState = moving;
                 nextCellCoords = world->matrixToMap(nextCell.first, nextCell.second);
             }
-            else {
-                // ovo mozda valja ukloniti kasnije
-                // ovo za sada radi tako da ako nema puta za dalje, zaustavlja se
-                // umesto da ceka da se put otvori i da nastavi dalje
-                destI = mapI;
-                destJ = mapJ;
-            }
         }
     }
 
@@ -94,6 +73,35 @@ void Character::update(int deltaT){
     setPos(sceneCoords.x(), sceneCoords.y());
 }
 
+void Character::orient(){
+    QVector2D direction(world->mapToScene(nextCellCoords) - world->mapToScene(worldCoords));
+    if(direction.length() < 0.01)
+        return;
+    direction.normalize();
+
+    double s = sqrt(2)/2;
+
+    if((direction - QVector2D(1, 0)).length() < 0.01)
+        orientation = 0;
+    if((direction - QVector2D(s, s)).length() < 0.5)
+        orientation = 1;
+    if((direction - QVector2D(0, 1)).length() < 0.01)
+        orientation = 2;
+    if((direction - QVector2D(-s, s)).length() < 0.5)
+        orientation = 3;
+    if((direction - QVector2D(-1, 0)).length() < 0.01)
+        orientation = 4;
+    if((direction - QVector2D(-s, -s)).length() < 0.5)
+        orientation = 5;
+    if((direction - QVector2D(0, -1)).length() < 0.01)
+        orientation = 6;
+    if((direction - QVector2D(s, -s)).length() < 0.5)
+        orientation = 7;
+}
+
+void Character::setTarget(Character* target){
+    this->target = target;
+}
 
 int Character::getI(){
     return mapI;
