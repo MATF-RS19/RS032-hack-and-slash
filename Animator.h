@@ -12,6 +12,7 @@ public:
         : Animator(frames, x, y, (frames.width()/x)/2, frames.height()/y - 10)
     {}
     void setCurrentAnimation(int i);
+    void setDefaultAnimation(int i);
     void update(int deltaT);
     QPixmap getCurrentFrame();
     void addAnimation(int start, int end, int duration, bool looping);
@@ -32,6 +33,7 @@ private:
         bool looping;
     };
     int currentAnimation;
+    int defaultAnimation;
     int offsetX, offsetY;
     QVector<Animation> animations;
 };

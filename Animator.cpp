@@ -6,6 +6,7 @@ Animator::Animator(QPixmap frames, int x, int y, int offsetX, int offsetY){
     currentAnimation = 0;
     this->offsetX = offsetX;
     this->offsetY = offsetY;
+    defaultAnimation = 0;
 }
 
 void Animator::addAnimation(int start, int end, int duration, bool looping){
@@ -42,9 +43,13 @@ void Animator::setCurrentAnimation(int i){
     }
 }
 
+void Animator::setDefaultAnimation(int i){
+    defaultAnimation = i;
+}
+
 void Animator::update(int deltaT){
     if(!animations[currentAnimation].nextFrame(deltaT))
-        setCurrentAnimation(0);
+        setCurrentAnimation(defaultAnimation);
 }
 
 bool Animator::isAnimated(){
