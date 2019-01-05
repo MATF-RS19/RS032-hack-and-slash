@@ -73,7 +73,7 @@ Map::Map(QString levelName){
             CharTemplate character = Engine::getInstance().getTemplate(0);
             int posI = list.at(1).toInt();
             int posJ = list.at(2).toInt();
-            player = new Player(this, character.speed, character.size, posI, posJ, Engine::getInstance().getAssetAnim(character.animIndex));
+            player = new Player(this, character.health, character.speed, character.size, posI, posJ, Engine::getInstance().getAssetAnim(character.animIndex));
             addItem(player);
             charCollision[posI][posJ] = 1;
         }
@@ -84,7 +84,7 @@ Map::Map(QString levelName){
             for(int j = 0; j < count; j++)
                 route.push_back(QPair<int, int>(list.at(2+2*j).toInt(), list.at(3+2*j).toInt()));
 
-            enemies.push_back(new Enemy(this, character.speed, character.size, route, character.aggroRange, character.deaggroRange, Engine::getInstance().getAssetAnim(character.animIndex)));
+            enemies.push_back(new Enemy(this, character.health, character.speed, character.size, route, character.aggroRange, character.deaggroRange, Engine::getInstance().getAssetAnim(character.animIndex)));
             addItem(enemies[enemies.size() - 1]);
             for(int k = 0; k < character.size; k++)
                 for(int l = 0; l < character.size; l++)
@@ -184,6 +184,19 @@ void Map::update(int deltaT){
         enemies[i]->update(deltaT);
     for(int i = 0; i < envItems.size(); i++)
         envItems[i]->update(deltaT);
+}
+
+void Map::destroyEnemy(Enemy *enemy){
+    enemies.removeOne(enemy);
+    this->removeItem(enemy);
+    if(player->getTarget() == enemy)
+        player->setTarget(nullptr);
+
+    for(int i = 0; i < enemy->getSize(); i++)
+        for(int j = 0; j < enemy->getSize(); j++)
+            charCollision[enemy->getI() + i][enemy->getJ() + j] = 0;
+
+    delete enemy;
 }
 
 bool Map::exists(int i, int j){

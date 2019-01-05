@@ -1,15 +1,15 @@
 #include "Player.h"
 
+#include <cmath>
+
 void Player::mousePressEvent(QGraphicsSceneMouseEvent* event) {
 
 }
 
 void Player::update(int deltaT){
+
+
     Character::update(deltaT);
-
-    if(target != nullptr)
-        setDestination(target->getI(), target->getJ());
-
     cam->ensureVisible(this, cam->getBorderX(), cam->getBorderY());
 }
 

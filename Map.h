@@ -29,6 +29,8 @@ public:
     Player* getPlayer();
     void setCam(Camera* camera);
 
+    void destroyEnemy(Enemy* enemy);
+
 private:
     QVector< QVector<int> > levelCollision;
     QVector< QVector<int> > charCollision;

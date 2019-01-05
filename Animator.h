@@ -13,7 +13,7 @@ public:
     {}
     void setCurrentAnimation(int i);
     void setDefaultAnimation(int i);
-    void update(int deltaT);
+    bool update(int deltaT);
     QPixmap getCurrentFrame();
     void addAnimation(int start, int end, int duration, bool looping);
     int getOffsetX();

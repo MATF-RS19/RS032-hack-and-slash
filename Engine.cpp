@@ -96,14 +96,15 @@ void Engine::run() {
         QStringList args = line.split(" ");
         int animIndex = args[0].toInt();
         int size = args[1].toInt();
-        float speed = args[2].toFloat();
+        int health = args[2].toInt();
+        float speed = args[3].toFloat();
         int aggroRange = 0;
         int deaggroRange = 0;
-        if(args.size() == 5){
-            aggroRange = args[3].toInt();
-            deaggroRange = args[4].toInt();
+        if(args.size() == 6){
+            aggroRange = args[4].toInt();
+            deaggroRange = args[5].toInt();
         }
-        charTemplates.push_back(CharTemplate(animIndex, size, speed, aggroRange, deaggroRange));
+        charTemplates.push_back(CharTemplate(animIndex, size, health, speed, aggroRange, deaggroRange));
     }
 
     m = new Map(":Levels/test.hsl");

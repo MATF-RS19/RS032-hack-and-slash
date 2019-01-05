@@ -4,7 +4,7 @@
 #include <QPointF>
 #include <QVector2D>
 
-Character::Character(Map* world, float speed, int size, int coordI, int coordJ, Animator animator) : QGraphicsPixmapItem (){
+Character::Character(Map* world, int health, float speed, int size, int coordI, int coordJ, Animator animator) : QGraphicsPixmapItem (){
     this->setPixmap(animator.getCurrentFrame());
 
     this->world = world;
@@ -26,6 +26,12 @@ Character::Character(Map* world, float speed, int size, int coordI, int coordJ, 
     this->size = size;
 
     orientation = 0;
+    attackRange = 1.5;
+    attackCooldown = 2000;
+    attackTimer = 0;
+
+    this->health = health;
+    attackDmg = 10;
 
     setOffset(-animator.getOffsetX(), -animator.getOffsetY());
     QVector2D pos = world->mapToScene(worldCoords);
@@ -37,11 +43,24 @@ void Character::update(int deltaT){
 
     orient();
 
+    animator.setDefaultAnimation(orientation);
+    bool loops = animator.update(deltaT);
+
+    bool dealDmg = false;
+
     if(charState == moving)
         animator.setCurrentAnimation(8 + orientation);
     else if(charState == ready)
         animator.setCurrentAnimation(orientation);
-    animator.update(deltaT);
+    else if(charState == attacking){
+        if(!loops){
+            dealDmg = true;
+            charState = attacked;
+        }
+        else
+            animator.setCurrentAnimation(16 + orientation);
+    }
+
     QPixmap frame = animator.getCurrentFrame();
     this->setPixmap(frame);
 
@@ -57,6 +76,19 @@ void Character::update(int deltaT){
         }
     }
     if(charState == ready){
+        if(target != nullptr){
+            double dist = sqrt(pow(target->getI() - getI(), 2) + pow(target->getJ() - getJ(), 2));
+            if(dist < attackRange && attackTimer == 0) {
+                charState = attacking;
+                destI = getI();
+                destJ = getJ();
+            }
+            else{
+                charState = ready;
+                setDestination(target->getI(), target->getJ());
+            }
+        }
+
         if(mapI != destI || mapJ != destJ){
             QPair<int, int> nextCell = world->findPath(*this, destI, destJ);
             if(nextCell.first != mapI || nextCell.second != mapJ){
@@ -69,12 +101,32 @@ void Character::update(int deltaT){
         }
     }
 
+    if(attackTimer || charState == attacking){
+        attackTimer += deltaT;
+        if(attackTimer > attackCooldown)
+            attackTimer = 0;
+    }
+
+    if(charState == attacked){
+        if(dealDmg && target){
+            target->takeDmg(attackDmg);
+        }
+        if(attackTimer == 0)
+            charState = ready;
+    }
+
     QVector2D sceneCoords = this->world->mapToScene(worldCoords);
     setPos(sceneCoords.x(), sceneCoords.y());
 }
 
 void Character::orient(){
-    QVector2D direction(world->mapToScene(nextCellCoords) - world->mapToScene(worldCoords));
+    QVector2D direction;
+
+    if(charState == moving)
+        direction = QVector2D(nextCellCoords - worldCoords);
+    else if(charState == attacking && target != nullptr)
+        direction = QVector2D(target->worldCoords - worldCoords);
+
     if(direction.length() < 0.01)
         return;
     direction.normalize();
@@ -82,25 +134,36 @@ void Character::orient(){
     double s = sqrt(2)/2;
 
     if((direction - QVector2D(1, 0)).length() < 0.01)
-        orientation = 0;
-    if((direction - QVector2D(s, s)).length() < 0.5)
         orientation = 1;
-    if((direction - QVector2D(0, 1)).length() < 0.01)
+    if((direction - QVector2D(s, s)).length() < 0.5)
         orientation = 2;
-    if((direction - QVector2D(-s, s)).length() < 0.5)
+    if((direction - QVector2D(0, 1)).length() < 0.01)
         orientation = 3;
-    if((direction - QVector2D(-1, 0)).length() < 0.01)
+    if((direction - QVector2D(-s, s)).length() < 0.5)
         orientation = 4;
-    if((direction - QVector2D(-s, -s)).length() < 0.5)
+    if((direction - QVector2D(-1, 0)).length() < 0.01)
         orientation = 5;
-    if((direction - QVector2D(0, -1)).length() < 0.01)
+    if((direction - QVector2D(-s, -s)).length() < 0.5)
         orientation = 6;
-    if((direction - QVector2D(s, -s)).length() < 0.5)
+    if((direction - QVector2D(0, -1)).length() < 0.01)
         orientation = 7;
+    if((direction - QVector2D(s, -s)).length() < 0.5)
+        orientation = 0;
+}
+
+void Character::takeDmg(int dmg){
+    health -= dmg;
+    if(health <= 0)
+        charState = dead;
+    qDebug() << "dmg dealt to" << this;
 }
 
 void Character::setTarget(Character* target){
     this->target = target;
+}
+
+Character* Character::getTarget() {
+    return target;
 }
 
 int Character::getI(){

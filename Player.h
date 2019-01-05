@@ -9,8 +9,7 @@
 
 class Player : public Character{
 public:
-
-    Player(Map* m, float speed, int size, int x, int y, Animator anim) : Character(m, speed, size, x, y, anim) {}
+    Player(Map* m, int health, float speed, int size, int x, int y, Animator anim) : Character(m, health, speed, size, x, y, anim) {}
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
     void update(int deltaT) override;
     void setCam(Camera* camera);

@@ -13,14 +13,17 @@ class Camera;
 
 class Character : public QGraphicsPixmapItem{
 public:
-    Character(Map* world, float speed, int size, int coordI, int coordJ, Animator animator);
+    Character(Map* world, int health, float speed, int size, int coordI, int coordJ, Animator animator);
     virtual void update(int deltaT);
     int getI();
     int getJ();
     int getSize();
     void setDestination(int i, int j);
     void setTarget(Character* target);
+    Character* getTarget();
     void orient();
+    void attack();
+    void takeDmg(int dmg);
 
 protected:
     Map* world;
@@ -37,13 +40,23 @@ protected:
     int size;               // broj kvadrat
     enum State{
         moving,
-        ready
+        ready,
+        attacking,
+        casting,
+        attacked,
+        dead
     };
     State charState;
 
     Animator animator;
 
     Character *target = nullptr;
+    float attackRange;
+    float attackCooldown;
+    float attackTimer;
+
+    int health;
+    int attackDmg;
 };
 
 

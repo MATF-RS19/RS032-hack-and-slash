@@ -318,15 +318,15 @@ debug\moc_Engine.cpp: C:\Qt\5.12.0\msvc2017\include\QtCore\QObject \
 		C:\Qt\5.12.0\msvc2017\include\QtGui\QVector2D \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\QPair \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\QString \
+		Camera.h \
+		Animator.h \
 		Character.h \
 		C:\Qt\5.12.0\msvc2017\include\QtWidgets\QGraphicsPixmapItem \
 		C:\Qt\5.12.0\msvc2017\include\QtWidgets\qgraphicsitem.h \
-		Animator.h \
 		Player.h \
 		C:\Qt\5.12.0\msvc2017\include\QtWidgets\QGraphicsSceneMouseEvent \
 		C:\Qt\5.12.0\msvc2017\include\QtWidgets\qgraphicssceneevent.h \
 		C:\Qt\5.12.0\msvc2017\include\QtWidgets\QGraphicsRectItem \
-		Camera.h \
 		Engine.h \
 		debug\moc_predefs.h \
 		C:\Qt\5.12.0\msvc2017\bin\moc.exe
@@ -477,15 +477,15 @@ debug\main.obj: main.cpp C:\Qt\5.12.0\msvc2017\include\QtWidgets\QApplication \
 		C:\Qt\5.12.0\msvc2017\include\QtGui\QVector2D \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\QPair \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\QString \
+		Camera.h \
+		Animator.h \
 		Character.h \
 		C:\Qt\5.12.0\msvc2017\include\QtWidgets\QGraphicsPixmapItem \
 		C:\Qt\5.12.0\msvc2017\include\QtWidgets\qgraphicsitem.h \
-		Animator.h \
 		Player.h \
 		C:\Qt\5.12.0\msvc2017\include\QtWidgets\QGraphicsSceneMouseEvent \
 		C:\Qt\5.12.0\msvc2017\include\QtWidgets\qgraphicssceneevent.h \
-		C:\Qt\5.12.0\msvc2017\include\QtWidgets\QGraphicsRectItem \
-		Camera.h
+		C:\Qt\5.12.0\msvc2017\include\QtWidgets\QGraphicsRectItem
 
 debug\Player.obj: Player.cpp Player.h \
 		C:\Qt\5.12.0\msvc2017\include\QtWidgets\QGraphicsSceneMouseEvent \
@@ -847,13 +847,13 @@ debug\Map.obj: Map.cpp Map.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qurl.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qurlquery.h \
 		C:\Qt\5.12.0\msvc2017\include\QtGui\qtouchdevice.h \
-		Character.h \
+		Camera.h \
 		Animator.h \
+		Character.h \
 		Player.h \
 		C:\Qt\5.12.0\msvc2017\include\QtWidgets\QGraphicsSceneMouseEvent \
 		C:\Qt\5.12.0\msvc2017\include\QtWidgets\qgraphicssceneevent.h \
 		C:\Qt\5.12.0\msvc2017\include\QtWidgets\QGraphicsRectItem \
-		Camera.h \
 		AnimatedItem.h \
 		Enemy.h
 
@@ -977,15 +977,15 @@ debug\Engine.obj: Engine.cpp Engine.h \
 		C:\Qt\5.12.0\msvc2017\include\QtGui\QVector2D \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\QPair \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\QString \
+		Camera.h \
+		Animator.h \
 		Character.h \
 		C:\Qt\5.12.0\msvc2017\include\QtWidgets\QGraphicsPixmapItem \
 		C:\Qt\5.12.0\msvc2017\include\QtWidgets\qgraphicsitem.h \
-		Animator.h \
 		Player.h \
 		C:\Qt\5.12.0\msvc2017\include\QtWidgets\QGraphicsSceneMouseEvent \
 		C:\Qt\5.12.0\msvc2017\include\QtWidgets\qgraphicssceneevent.h \
 		C:\Qt\5.12.0\msvc2017\include\QtWidgets\QGraphicsRectItem \
-		Camera.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\QTimer \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qtimer.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qbasictimer.h \
@@ -1305,36 +1305,46 @@ debug\Enemy.obj: Enemy.cpp Enemy.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qmutex.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qnumeric.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qversiontagging.h \
-		Character.h \
-		C:\Qt\5.12.0\msvc2017\include\QtWidgets\QGraphicsPixmapItem \
-		C:\Qt\5.12.0\msvc2017\include\QtWidgets\qgraphicsitem.h \
+		C:\Qt\5.12.0\msvc2017\include\QtWidgets\QGraphicsSceneMouseEvent \
+		C:\Qt\5.12.0\msvc2017\include\QtWidgets\qgraphicssceneevent.h \
 		C:\Qt\5.12.0\msvc2017\include\QtWidgets\qtwidgetsglobal.h \
 		C:\Qt\5.12.0\msvc2017\include\QtGui\qtguiglobal.h \
 		C:\Qt\5.12.0\msvc2017\include\QtGui\qtgui-config.h \
 		C:\Qt\5.12.0\msvc2017\include\QtWidgets\qtwidgets-config.h \
-		C:\Qt\5.12.0\msvc2017\include\QtCore\qobject.h \
-		C:\Qt\5.12.0\msvc2017\include\QtCore\qobjectdefs.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qcoreevent.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qnamespace.h \
-		C:\Qt\5.12.0\msvc2017\include\QtCore\qobjectdefs_impl.h \
-		C:\Qt\5.12.0\msvc2017\include\QtCore\qstring.h \
-		C:\Qt\5.12.0\msvc2017\include\QtCore\qchar.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qbytearray.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qrefcount.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qarraydata.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qobjectdefs.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qobjectdefs_impl.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qpoint.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qscopedpointer.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qrect.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qmargins.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qsize.h \
+		C:\Qt\5.12.0\msvc2017\include\QtGui\qpolygon.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qvector.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qalgorithms.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qiterator.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qlist.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qhashfunctions.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qstring.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qchar.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qstringliteral.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qstringalgorithms.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qstringview.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qstringbuilder.h \
-		C:\Qt\5.12.0\msvc2017\include\QtCore\qlist.h \
-		C:\Qt\5.12.0\msvc2017\include\QtCore\qalgorithms.h \
-		C:\Qt\5.12.0\msvc2017\include\QtCore\qiterator.h \
-		C:\Qt\5.12.0\msvc2017\include\QtCore\qhashfunctions.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qbytearraylist.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qstringlist.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qregexp.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qstringmatcher.h \
-		C:\Qt\5.12.0\msvc2017\include\QtCore\qcoreevent.h \
-		C:\Qt\5.12.0\msvc2017\include\QtCore\qscopedpointer.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qset.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qhash.h \
+		Character.h \
+		C:\Qt\5.12.0\msvc2017\include\QtWidgets\QGraphicsPixmapItem \
+		C:\Qt\5.12.0\msvc2017\include\QtWidgets\qgraphicsitem.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qobject.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qmetatype.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qvarlengtharray.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qcontainerfwd.h \
@@ -1342,23 +1352,15 @@ debug\Enemy.obj: Enemy.cpp Enemy.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qvariant.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qmap.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qdebug.h \
-		C:\Qt\5.12.0\msvc2017\include\QtCore\qhash.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qtextstream.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qiodevice.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qlocale.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qshareddata.h \
-		C:\Qt\5.12.0\msvc2017\include\QtCore\qvector.h \
-		C:\Qt\5.12.0\msvc2017\include\QtCore\qpoint.h \
-		C:\Qt\5.12.0\msvc2017\include\QtCore\qset.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qcontiguouscache.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qsharedpointer.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\qsharedpointer_impl.h \
-		C:\Qt\5.12.0\msvc2017\include\QtCore\qrect.h \
-		C:\Qt\5.12.0\msvc2017\include\QtCore\qmargins.h \
-		C:\Qt\5.12.0\msvc2017\include\QtCore\qsize.h \
 		C:\Qt\5.12.0\msvc2017\include\QtGui\qpainterpath.h \
 		C:\Qt\5.12.0\msvc2017\include\QtGui\qmatrix.h \
-		C:\Qt\5.12.0\msvc2017\include\QtGui\qpolygon.h \
 		C:\Qt\5.12.0\msvc2017\include\QtGui\qregion.h \
 		C:\Qt\5.12.0\msvc2017\include\QtGui\qwindowdefs.h \
 		C:\Qt\5.12.0\msvc2017\include\QtGui\qwindowdefs_win.h \
@@ -1383,7 +1385,31 @@ debug\Enemy.obj: Enemy.cpp Enemy.h \
 		C:\Qt\5.12.0\msvc2017\include\QtGui\qpen.h \
 		C:\Qt\5.12.0\msvc2017\include\QtCore\QString \
 		Animator.h \
-		C:\Qt\5.12.0\msvc2017\include\QtGui\QPixmap
+		C:\Qt\5.12.0\msvc2017\include\QtGui\QPixmap \
+		Player.h \
+		C:\Qt\5.12.0\msvc2017\include\QtWidgets\QGraphicsRectItem \
+		Camera.h \
+		C:\Qt\5.12.0\msvc2017\include\QtWidgets\QGraphicsView \
+		C:\Qt\5.12.0\msvc2017\include\QtWidgets\qgraphicsview.h \
+		C:\Qt\5.12.0\msvc2017\include\QtGui\qpainter.h \
+		C:\Qt\5.12.0\msvc2017\include\QtGui\qtextoption.h \
+		C:\Qt\5.12.0\msvc2017\include\QtGui\qfontinfo.h \
+		C:\Qt\5.12.0\msvc2017\include\QtGui\qfontmetrics.h \
+		C:\Qt\5.12.0\msvc2017\include\QtWidgets\qscrollarea.h \
+		C:\Qt\5.12.0\msvc2017\include\QtWidgets\qabstractscrollarea.h \
+		C:\Qt\5.12.0\msvc2017\include\QtWidgets\qframe.h \
+		C:\Qt\5.12.0\msvc2017\include\QtWidgets\qwidget.h \
+		C:\Qt\5.12.0\msvc2017\include\QtGui\qpalette.h \
+		C:\Qt\5.12.0\msvc2017\include\QtWidgets\qsizepolicy.h \
+		C:\Qt\5.12.0\msvc2017\include\QtGui\qcursor.h \
+		C:\Qt\5.12.0\msvc2017\include\QtGui\qkeysequence.h \
+		C:\Qt\5.12.0\msvc2017\include\QtGui\qevent.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qurl.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qurlquery.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qfile.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\qfiledevice.h \
+		C:\Qt\5.12.0\msvc2017\include\QtGui\qtouchdevice.h \
+		C:\Qt\5.12.0\msvc2017\include\QtCore\QDebug
 
 debug\qrc_assets.obj: debug\qrc_assets.cpp 
 

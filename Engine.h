@@ -9,10 +9,10 @@
 #include <tuple>
 
 #include "Map.h"
-#include "Character.h"
-#include "Player.h"
 #include "Camera.h"
 #include "Animator.h"
+#include "Character.h"
+#include "Player.h"
 
 struct CharTemplate;
 
@@ -46,9 +46,10 @@ private:
 
 struct CharTemplate{
     CharTemplate() {}
-    CharTemplate(int animIndex, int size, float speed, int aggroRange = 0, int deaggroRange = 0){
+    CharTemplate(int animIndex, int size, int health, float speed, int aggroRange = 0, int deaggroRange = 0){
         this->animIndex = animIndex;
         this->size = size;
+        this->health = health;
         this->speed = speed;
         this->aggroRange = aggroRange;
         this->deaggroRange = deaggroRange;
@@ -56,6 +57,7 @@ struct CharTemplate{
 
     int animIndex = 0;
     int size = 0;
+    int health = 0;
     float speed = 0;
     int aggroRange = 0;
     int deaggroRange = 0;

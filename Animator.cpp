@@ -47,9 +47,12 @@ void Animator::setDefaultAnimation(int i){
     defaultAnimation = i;
 }
 
-void Animator::update(int deltaT){
-    if(!animations[currentAnimation].nextFrame(deltaT))
+bool Animator::update(int deltaT){
+    if(!animations[currentAnimation].nextFrame(deltaT)){
         setCurrentAnimation(defaultAnimation);
+        return false;
+    }
+    return true;
 }
 
 bool Animator::isAnimated(){
