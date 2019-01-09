@@ -33,6 +33,8 @@ public:
     void drainMana(int amount);
     void heal(int hp);
     int getHealth();
+    void setSpeed(float v);
+    float getSpeed();
 
 protected:
     Map* world;
@@ -40,6 +42,7 @@ protected:
     QVector2D worldCoords;
     QVector2D nextCellCoords;
     float movementSpeed;
+    float defaultSpeed;
     int orientation;
 
     int mapI, mapJ;         // koordinate polja matrice

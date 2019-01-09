@@ -16,6 +16,7 @@ Character::Character(Map* world, int health, float speed, int size, int coordI, 
     worldCoords = world->matrixToMap(coordI, coordJ);
     nextCellCoords = world->matrixToMap(coordI, coordJ);
     movementSpeed = speed;
+    defaultSpeed = speed;
 
     charState = ready;
 
@@ -126,6 +127,15 @@ void Character::update(int deltaT){
 
     QVector2D sceneCoords = this->world->mapToScene(worldCoords);
     setPos(sceneCoords.x(), sceneCoords.y());
+    movementSpeed = defaultSpeed;
+}
+
+void Character::setSpeed(float v){
+    movementSpeed = v;
+}
+
+float Character::getSpeed(){
+    return movementSpeed;
 }
 
 Map* Character::getMap(){

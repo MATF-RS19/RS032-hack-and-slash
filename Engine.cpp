@@ -190,6 +190,8 @@ Spell* Engine::getSpell(int i){
         return new FirestormSpell();
     case 2:
         return new FlamethrowerSpell();
+    case 3:
+        return new SlowSpell();
     case 4:
         return new FireballSpell();
     case 5:

@@ -219,4 +219,28 @@ private:
     float radius = 0.5;
 };
 
+class SlowSpell: public Spell {
+public:
+    SlowSpell()
+        : Spell(2500, 15, 3, mapTarget)
+    {}
+    void cast(Character* caster) override {}
+    void cast(Character* caster, Character* target) override {}
+    void cast(Character* caster, float worldX, float worldY) override;
+
+private:
+    float range = 4;
+};
+
+class SlowEffect: public SpellEffect {
+public:
+    SlowEffect(Character* caster, float directionX, float directionY, Animator animator, Map* m);
+    void update(int deltaT) override;
+
+private:
+    int timer = 10000;
+    float speed = 0.0005;
+    float radius = 2;
+};
+
 #endif // SPELL_H

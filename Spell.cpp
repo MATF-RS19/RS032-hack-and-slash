@@ -297,7 +297,7 @@ void FlamethrowerSpell::cast(Character* caster, float worldX, float worldY){
         caster->drainMana(manaCost);
 
         QVector2D dir = (QVector2D(worldX, worldY) - caster->getWorldCoords()).normalized();
-        for(int i = 0; i < 4; i++){
+        for(int i = 0; i < 5; i++){
             float dirX = caster->getWorldCoords().x() + (i+1)*0.5*dir.x();
             float dirY = caster->getWorldCoords().y() + (i+1)*0.5*dir.y();
             new FlamethrowerEffect(caster, dirX, dirY, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
@@ -322,6 +322,41 @@ FlamethrowerEffect::FlamethrowerEffect(Character* caster, float posX, float posY
 
 void FlamethrowerEffect::update(int deltaT){
     SpellEffect::update(deltaT);
+
+    timer -= deltaT;
+    if(timer <= 0){
+        m->destroySpell(this);
+        return;
+    }
+}
+
+void SlowSpell::cast(Character* caster, float worldX, float worldY){
+    if(ready() && caster->getMana() >= manaCost && (caster->getWorldCoords() - QVector2D(worldX, worldY)).length() < range){
+        caster->drainMana(manaCost);
+
+        SlowEffect* effect = new SlowEffect(caster, worldX, worldY, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
+
+        cooldownTimer = cooldown;
+    }
+}
+
+SlowEffect::SlowEffect(Character* caster, float worldX, float worldY, Animator animator, Map* m)
+    : SpellEffect(caster, animator, m, worldX, worldY)
+{
+    m->addItem(this);
+    m->addSpell(this);
+}
+
+void SlowEffect::update(int deltaT){
+    SpellEffect::update(deltaT);
+    setZValue(worldX + worldY + 2);
+
+    for(int i = 0; i < m->numberOfEnemies(); i++){
+        Character* enemy = m->getEnemy(i);
+        QVector2D enemyPos = enemy->getWorldCoords();
+        if(enemyPos.x() <= worldX + radius && enemyPos.y() <= worldY + radius)
+            enemy->setSpeed(enemy->getSpeed() - speed);
+    }
 
     timer -= deltaT;
     if(timer <= 0){
