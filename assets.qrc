@@ -18,5 +18,6 @@
         <file>Assets/Spells/firestorm.png</file>
         <file>Assets/Spells/darkfog.png</file>
         <file>Assets/Spells/darkorbs.png</file>
+        <file>Assets/Spells/heal.png</file>
     </qresource>
 </RCC>

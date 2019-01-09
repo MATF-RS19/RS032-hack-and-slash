@@ -195,8 +195,6 @@ void DarkorbsEffect::update(int deltaT){
         worldX = caster->getWorldCoords().x() + displacementX;
         worldY = caster->getWorldCoords().y() + displacementY;
 
-        qDebug() << caster->getWorldCoords();
-
         for(int i = 0; i < m->numberOfEnemies(); i++){
             Character* enemy = m->getEnemy(i);
             if((enemy->getWorldCoords()- caster->getWorldCoords() - QVector2D(displacementX, displacementY)).length() < radius){
@@ -219,6 +217,37 @@ void DarkorbsEffect::update(int deltaT){
         }
     }
 }
+
+void HealSpell::cast(Character* caster){
+    if(ready() && caster->getMana() >= manaCost){
+        caster->drainMana(manaCost);
+
+        HealEffect* effect = new HealEffect(caster, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
+
+        cooldownTimer = cooldown;
+    }
+}
+
+HealEffect::HealEffect(Character* caster, Animator animator, Map* m)
+    : SpellEffect (caster, animator, m, caster->getWorldCoords().x(), caster->getWorldCoords().y())
+{
+    m->addItem(this);
+    m->addSpell(this);
+
+    caster->heal(hp);
+}
+
+void HealEffect::update(int deltaT){
+    SpellEffect::update(deltaT);
+
+    setZValue(this->zValue() - 0.1);
+    timer -= deltaT;
+    if(timer <= 0){
+        m->destroySpell(this);
+        return;
+    }
+}
+
 
 
 

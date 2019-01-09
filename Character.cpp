@@ -33,7 +33,7 @@ Character::Character(Map* world, int health, float speed, int size, int coordI, 
     attackTimer = 0;
 
     this->health = health;
-    maxHealth = health;
+    maxHealth = 300000;
     mana = 100;
     maxMana = 100;
     attackDmg = 10;
@@ -183,6 +183,16 @@ void Character::drainMana(int amount) {
     mana -= amount;
     if(mana < 0)
         mana = 0;
+}
+
+void Character::heal(int hp){
+    health += hp;
+    if(health > maxHealth)
+        health = maxHealth;
+}
+
+int Character::getHealth(){
+    return health;
 }
 
 void Character::cast(int i, Character* target) {

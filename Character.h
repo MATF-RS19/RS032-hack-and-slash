@@ -31,6 +31,8 @@ public:
     void cast(int i, float worldX, float worldY);
     int getMana();
     void drainMana(int amount);
+    void heal(int hp);
+    int getHealth();
 
 protected:
     Map* world;

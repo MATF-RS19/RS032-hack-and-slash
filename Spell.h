@@ -151,4 +151,24 @@ private:
     Character* target = nullptr;
 };
 
+class HealSpell: public Spell {
+public:
+    HealSpell()
+        : Spell(2500, 15, 5, noTarget)
+    {}
+    void cast(Character* caster) override;
+    void cast(Character* caster, Character* target) override {}
+    void cast(Character* caster, float worldX, float worldY) override {}
+};
+
+class HealEffect: public SpellEffect {
+public:
+    HealEffect(Character* caster, Animator animator, Map* m);
+    void update(int deltaT) override;
+
+private:
+    int hp = 10;
+    int timer = 640;
+};
+
 #endif // SPELL_H

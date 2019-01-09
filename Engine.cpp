@@ -190,6 +190,8 @@ Spell* Engine::getSpell(int i){
         return new FirestormSpell();
     case 4:
         return new FireballSpell();
+    case 5:
+        return new HealSpell();
     case 7:
         return new DarkfogSpell();
     case 9:

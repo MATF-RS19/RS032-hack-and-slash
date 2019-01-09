@@ -173,6 +173,9 @@ void Map::keyPressEvent(QKeyEvent* event) {
     case Qt::Key::Key_4:
         player->cast(3);
         break;
+    case Qt::Key::Key_5:
+        player->cast(4);
+        break;
     }
 
 
