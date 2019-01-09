@@ -6,6 +6,7 @@
 #include <QGraphicsPixmapItem>
 #include <QFile>
 #include <QDebug>
+#include <QKeyEvent>
 
 #include <cmath>
 
@@ -14,6 +15,7 @@
 #include "Player.h"
 #include "AnimatedItem.h"
 #include "Enemy.h"
+#include "Spell.h"
 
 Map::Map(QString levelName){
     QFile file(levelName);
@@ -73,18 +75,28 @@ Map::Map(QString levelName){
             CharTemplate character = Engine::getInstance().getTemplate(0);
             int posI = list.at(1).toInt();
             int posJ = list.at(2).toInt();
-            player = new Player(this, character.health, character.speed, character.size, posI, posJ, Engine::getInstance().getAssetAnim(character.animIndex));
+
+            QVector<Spell*> spells;
+            for(int j = 0; j < character.spells.size(); j++)
+                spells.push_back(Engine::getInstance().getSpell(character.spells[j]));
+
+            player = new Player(this, character.health, character.speed, character.size, posI, posJ, Engine::getInstance().getAssetAnim(character.animIndex), spells);
             addItem(player);
             charCollision[posI][posJ] = 1;
         }
         else {
             CharTemplate character = Engine::getInstance().getTemplate(x);
             int count = list.at(1).toInt();
+
             QVector< QPair<int, int> > route;
             for(int j = 0; j < count; j++)
                 route.push_back(QPair<int, int>(list.at(2+2*j).toInt(), list.at(3+2*j).toInt()));
 
-            enemies.push_back(new Enemy(this, character.health, character.speed, character.size, route, character.aggroRange, character.deaggroRange, Engine::getInstance().getAssetAnim(character.animIndex)));
+            QVector<Spell*> spells;
+            for(int j = 0; j < character.spells.size(); j++)
+                spells.push_back(Engine::getInstance().getSpell(character.spells[j]));
+
+            enemies.push_back(new Enemy(this, character.health, character.speed, character.size, route, character.aggroRange, character.deaggroRange, Engine::getInstance().getAssetAnim(character.animIndex), spells));
             addItem(enemies[enemies.size() - 1]);
             for(int k = 0; k < character.size; k++)
                 for(int l = 0; l < character.size; l++)
@@ -109,16 +121,48 @@ void Map::setPlayer(Player* p) {
     player = p;
 }
 
-void Map::mousePressEvent(QGraphicsSceneMouseEvent* event) {
-    QGraphicsScene::mousePressEvent(event);
+void Map::addSpell(SpellEffect* spell){
+    spells.push_back(spell);
+}
 
-    if(event->button() == Qt::MouseButton::LeftButton){
+Map::InputState Map::getInputState() {
+    return inputState;
+}
+
+void Map::setInputState(InputState state, int spell) {
+    // change cursor etc
+    inputState = state;
+    inputSpell = spell;
+}
+
+int Map::getInputSpell(){
+    return inputSpell;
+}
+
+void Map::mousePressEvent(QGraphicsSceneMouseEvent* event) {
+    if(inputState == normal && event->button() == Qt::MouseButton::LeftButton){
         QPointF pressPos = event->buttonDownScenePos(Qt::MouseButton::LeftButton);
         QPair<int, int> newDest = mapToMatrix(QVector2D(0.5, 0.5) + sceneToMap(QVector2D(pressPos.x(), pressPos.y())));
         player->setDestination(newDest.first, newDest.second);
         player->setTarget(nullptr);
     }
 
+    if(inputState == targetMap && event->button() == Qt::MouseButton::RightButton) {
+        //castuj spell
+        inputState = normal;
+    }
+
+    QGraphicsScene::mousePressEvent(event);
+}
+
+void Map::keyPressEvent(QKeyEvent* event) {
+    switch(event->key()) {
+    case Qt::Key::Key_1:
+        player->cast(0);
+        break;
+    }
+
+    QGraphicsScene::keyPressEvent(event);
 }
 
 QVector2D Map::mapToScene(QVector2D worldCoords){
@@ -179,6 +223,9 @@ void Map::moveCharacter(Character &ch, int destX, int destY){
 }
 
 void Map::update(int deltaT){
+    for(int i = 0; i < spells.size(); i++)
+        spells[i]->update(deltaT);
+
     player->update(deltaT);
     for(int i = 0; i < enemies.size(); i++)
         enemies[i]->update(deltaT);
@@ -197,6 +244,13 @@ void Map::destroyEnemy(Enemy *enemy){
             charCollision[enemy->getI() + i][enemy->getJ() + j] = 0;
 
     delete enemy;
+}
+
+void Map::destroySpell(SpellEffect *spell){
+    spells.removeOne(spell);
+    this->removeItem(spell);
+
+    delete spell;
 }
 
 bool Map::exists(int i, int j){

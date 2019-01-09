@@ -20,7 +20,8 @@ SOURCES += main.cpp \
     Camera.cpp \
     Animator.cpp \
     AnimatedItem.cpp \
-    Enemy.cpp
+    Enemy.cpp \
+    Spell.cpp
 
 HEADERS  += \
     Player.h \
@@ -30,9 +31,13 @@ HEADERS  += \
     Camera.h \
     Animator.h \
     AnimatedItem.h \
-    Enemy.h
+    Enemy.h \
+    Spell.h \
+    Consumable.h
 
 FORMS    +=
 
 RESOURCES += \
     assets.qrc
+
+DISTFILES +=

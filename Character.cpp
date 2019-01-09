@@ -4,7 +4,9 @@
 #include <QPointF>
 #include <QVector2D>
 
-Character::Character(Map* world, int health, float speed, int size, int coordI, int coordJ, Animator animator) : QGraphicsPixmapItem (){
+#include "Spell.h"
+
+Character::Character(Map* world, int health, float speed, int size, int coordI, int coordJ, Animator animator, QVector<Spell*> spells): QGraphicsPixmapItem (){
     this->setPixmap(animator.getCurrentFrame());
 
     this->world = world;
@@ -31,7 +33,12 @@ Character::Character(Map* world, int health, float speed, int size, int coordI, 
     attackTimer = 0;
 
     this->health = health;
+    maxHealth = health;
+    mana = 100;
+    maxMana = 100;
     attackDmg = 10;
+
+    this->spells = spells;
 
     setOffset(-animator.getOffsetX(), -animator.getOffsetY());
     QVector2D pos = world->mapToScene(worldCoords);
@@ -39,8 +46,10 @@ Character::Character(Map* world, int health, float speed, int size, int coordI, 
 }
 
 void Character::update(int deltaT){
-    setZValue(mapI + mapJ);
+    for(int i = 0; i < spells.size(); i++)
+        spells[i]->update(deltaT);
 
+    setZValue(mapI + mapJ);
     orient();
 
     animator.setDefaultAnimation(orientation);
@@ -119,6 +128,18 @@ void Character::update(int deltaT){
     setPos(sceneCoords.x(), sceneCoords.y());
 }
 
+Map* Character::getMap(){
+    return world;
+}
+
+QVector2D Character::getWorldCoords(){
+    return worldCoords;
+}
+
+int Character::getMana() {
+    return mana;
+}
+
 void Character::orient(){
     QVector2D direction;
 
@@ -156,6 +177,20 @@ void Character::takeDmg(int dmg){
     if(health <= 0)
         charState = dead;
     qDebug() << "dmg dealt to" << this;
+}
+
+void Character::drainMana(int amount) {
+    mana -= amount;
+    if(mana < 0)
+        mana = 0;
+}
+
+void Character::cast(int i, Character* target) {
+    spells[i]->cast(this, target);
+}
+
+void Character::cast(int i, float worldX, float worldY) {
+    spells[i]->cast(this, worldX, worldY);
 }
 
 void Character::setTarget(Character* target){

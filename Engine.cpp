@@ -10,8 +10,10 @@
 #include "Map.h"
 #include "Character.h"
 #include "Animator.h"
+#include "Spell.h"
 
 void Engine::run() {
+
     QFile fileTiles(":/Assets/tiles.hsa");
     fileTiles.open(QIODevice::ReadOnly | QIODevice::Text);
 
@@ -98,13 +100,35 @@ void Engine::run() {
         int size = args[1].toInt();
         int health = args[2].toInt();
         float speed = args[3].toFloat();
-        int aggroRange = 0;
-        int deaggroRange = 0;
-        if(args.size() == 6){
-            aggroRange = args[4].toInt();
-            deaggroRange = args[5].toInt();
+        int aggroRange = args[4].toInt();
+        int deaggroRange = args[5].toInt();
+        QVector<int> spells;
+        for(int i = 6; i < args.size(); i++)
+            spells.push_back(args[i].toInt());
+        charTemplates.push_back(CharTemplate(animIndex, size, health, speed, aggroRange, deaggroRange, spells));
+    }
+
+    QFile fileSpells(":/Assets/spells.hsa");
+    fileSpells.open(QIODevice::ReadOnly | QIODevice::Text);
+
+    while(!fileSpells.atEnd()){
+        QString line = fileSpells.readLine().trimmed();
+        QStringList args = line.split(" ");
+        QString name = args[0];
+        int dimX = args[1].toInt();
+        int dimY = args[2].toInt();
+        int width = args[3].toInt();
+        int begin = args[4].toInt();
+        int end = args[5].toInt();
+        int duration = args[6].toInt();
+        if(args.size() == 7)
+            assetsSpells.push_back(Animator(QPixmap(name).scaledToWidth(width * dimX, Qt::SmoothTransformation), dimX, dimY));
+        if(args.size() == 9){
+            int offsetX = args[7].toInt();
+            int offsetY = args[8].toInt();
+            assetsSpells.push_back(Animator(QPixmap(name).scaledToWidth(width * dimX, Qt::SmoothTransformation), dimX, dimY, offsetX, offsetY));
         }
-        charTemplates.push_back(CharTemplate(animIndex, size, health, speed, aggroRange, deaggroRange));
+        assetsSpells[assetsSpells.size() - 1].addAnimation(begin, end, duration, true);
     }
 
     m = new Map(":Levels/test.hsl");
@@ -114,8 +138,8 @@ void Engine::run() {
     cam->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     cam->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     cam->show();
-    cam->setFixedSize(1920, 1080);
-    m->setSceneRect(-1920/2, -1080/2, 1920, 1080);
+    cam->setFixedSize(1280, 1024);
+    m->setSceneRect(-1280/2, -1024/2, 1280, 1024);
 
     //ch = new Player(m, 1, 1, 1, assetsAnims[0]);
 
@@ -154,4 +178,15 @@ CharTemplate Engine::getTemplate(int i){
 
 Animator Engine::getAssetAnim(int i){
     return assetsAnims[i];
+}
+
+Animator Engine::getAssetSpell(int i){
+    return assetsSpells[i];
+}
+
+Spell* Engine::getSpell(int i){
+    switch(i) {
+    case 4:
+        return new FireballSpell();
+    }
 }

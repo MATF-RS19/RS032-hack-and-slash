@@ -12,9 +12,16 @@ class Player;
 class AnimatedItem;
 class Enemy;
 class Camera;
+class SpellEffect;
 
 class Map : public QGraphicsScene{
 public:
+    enum InputState {
+        normal,
+        targetCharacter,
+        targetMap
+    };
+
     Map(QString levelName);
     QPair<int, int> findPath(Character& ch, int destX, int destY);
     bool exists(int i, int j);
@@ -25,11 +32,17 @@ public:
     QPair<int, int> mapToMatrix(QVector2D worldCoords);
     void setPlayer(Player* p);
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+    void keyPressEvent(QKeyEvent* event) override;
     void update(int deltaT);
     Player* getPlayer();
     void setCam(Camera* camera);
 
     void destroyEnemy(Enemy* enemy);
+    void destroySpell(SpellEffect* spell);
+    void addSpell(SpellEffect* spell);
+    InputState getInputState();
+    int getInputSpell();
+    void setInputState(InputState state, int spell);
 
 private:
     QVector< QVector<int> > levelCollision;
@@ -38,7 +51,12 @@ private:
 
     Player* player;
     QVector< Enemy* > enemies;
+    QVector< SpellEffect* > spells;
+
     QVector< AnimatedItem* > envItems;
+
+    InputState inputState = normal;
+    int inputSpell = 0;
 };
 
 #endif // MAP_H

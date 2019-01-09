@@ -8,12 +8,13 @@
 
 #include "Map.h"
 #include "Animator.h"
+#include "Spell.h"
 
 class Camera;
 
 class Character : public QGraphicsPixmapItem{
 public:
-    Character(Map* world, int health, float speed, int size, int coordI, int coordJ, Animator animator);
+    Character(Map* world, int health, float speed, int size, int coordI, int coordJ, Animator animator, QVector<Spell*> spells);
     virtual void update(int deltaT);
     int getI();
     int getJ();
@@ -24,6 +25,12 @@ public:
     void orient();
     void attack();
     void takeDmg(int dmg);
+    Map* getMap();
+    QVector2D getWorldCoords();
+    void cast(int i, Character* target);
+    void cast(int i, float worldX, float worldY);
+    int getMana();
+    void drainMana(int amount);
 
 protected:
     Map* world;
@@ -51,11 +58,16 @@ protected:
     Animator animator;
 
     Character *target = nullptr;
+    QVector<Spell*> spells;
+
     float attackRange;
     float attackCooldown;
     float attackTimer;
 
     int health;
+    int maxHealth;
+    int mana;
+    int maxMana;
     int attackDmg;
 };
 

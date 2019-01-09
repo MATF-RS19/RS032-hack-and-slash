@@ -4,8 +4,8 @@
 #include <cmath>
 #include <QDebug>
 
-Enemy::Enemy(Map* m, int health, float speed, int size, QVector< QPair<int, int> > patrolRoute, int aggroRange, int deaggroRange, Animator anim)
-    : Character (m, health, speed, size, patrolRoute[0].first, patrolRoute[0].second, anim)
+Enemy::Enemy(Map* m, int health, float speed, int size, QVector< QPair<int, int> > patrolRoute, int aggroRange, int deaggroRange, Animator anim, QVector<Spell*> spells)
+    : Character (m, health, speed, size, patrolRoute[0].first, patrolRoute[0].second, anim, spells)
 {
     this->patrolRoute = patrolRoute;
     this->aggroRange = aggroRange;
@@ -44,5 +44,10 @@ void Enemy::mousePressEvent(QGraphicsSceneMouseEvent *event){
         return;
 
     Player* player = world->getPlayer();
-    player->setTarget(this);
+    if(world->getInputState() == Map::InputState::normal)
+        player->setTarget(this);
+    if(world->getInputState() == Map::InputState::targetCharacter) {
+        player->Character::cast(world->getInputSpell(), this);
+        world->setInputState(Map::InputState::normal, 0);
+    }
 }

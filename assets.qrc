@@ -13,5 +13,7 @@
         <file>Assets/tiles.hsa</file>
         <file>Assets/Environment/Campfire.png</file>
         <file>Assets/chars.hsa</file>
+        <file>Assets/Spells/fireball.png</file>
+        <file>Assets/spells.hsa</file>
     </qresource>
 </RCC>
