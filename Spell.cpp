@@ -165,4 +165,61 @@ void DarkfogEffect::update(int deltaT){
     }
 }
 
+void DarkorbsSpell::cast(Character* caster){
+    if(ready() && caster->getMana() >= manaCost){
+        caster->drainMana(manaCost);
+
+        for(int i = 0; i < 3; i++){
+            QVector2D v = 0.5 * QVector2D(cos(i * 2*M_PI/3), sin(i * 2*M_PI/3));
+            new DarkorbsEffect(caster, v.x(), v.y(), Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
+        }
+
+        cooldownTimer = cooldown;
+    }
+}
+
+DarkorbsEffect::DarkorbsEffect(Character* caster, float displacementX, float displacementY, Animator animator, Map* m)
+    : SpellEffect(caster, animator, m, caster->getWorldCoords().x() + displacementX, caster->getWorldCoords().y() + displacementY)
+{
+    this->displacementX = displacementX;
+    this->displacementY = displacementY;
+    m->addItem(this);
+    m->addSpell(this);
+}
+
+void DarkorbsEffect::update(int deltaT){
+    SpellEffect::update(deltaT);
+
+    // da li postoji, nije dovoljno !target
+    if(!target){
+        worldX = caster->getWorldCoords().x() + displacementX;
+        worldY = caster->getWorldCoords().y() + displacementY;
+
+        qDebug() << caster->getWorldCoords();
+
+        for(int i = 0; i < m->numberOfEnemies(); i++){
+            Character* enemy = m->getEnemy(i);
+            if((enemy->getWorldCoords()- caster->getWorldCoords() - QVector2D(displacementX, displacementY)).length() < radius){
+                target = enemy;
+            }
+        }
+    }
+    else {
+        QVector2D direction = QVector2D(target->getWorldCoords() - QVector2D(worldX, worldY));
+        if(direction.length() < speed * deltaT * 2) {
+            target->takeDmg(dmg);
+            target = nullptr;
+            m->destroySpell(this);
+        }
+        else{
+            direction.normalize();
+            worldX += speed * deltaT * direction.x();
+            worldY += speed * deltaT * direction.y();
+            speed += 0.00001 * deltaT;
+        }
+    }
+}
+
+
+
 

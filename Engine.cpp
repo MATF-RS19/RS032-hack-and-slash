@@ -192,5 +192,7 @@ Spell* Engine::getSpell(int i){
         return new FireballSpell();
     case 7:
         return new DarkfogSpell();
+    case 9:
+        return new DarkorbsSpell();
     }
 }

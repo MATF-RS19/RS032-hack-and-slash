@@ -53,7 +53,7 @@ Map::Map(QString levelName){
         for(int j = 0; j < n; j++){
             int x = list.at(j).toInt();
             if(x){
-                envItems.push_back(new AnimatedItem(Engine::getInstance().getAssetEnv(x - 1), mapToScene(matrixToMap(i, j)).x(), mapToScene(matrixToMap(i, j)).y(), i+j));
+                envItems.push_back(new AnimatedItem(Engine::getInstance().getAssetEnv(x - 1), mapToScene(matrixToMap(i, j)).x(), mapToScene(matrixToMap(i, j)).y(), matrixToMap(i,j).x() + matrixToMap(i, j).y()));
                 this->addItem((envItems[envItems.size() - 1]));
             }
         }
@@ -169,6 +169,9 @@ void Map::keyPressEvent(QKeyEvent* event) {
         break;
     case Qt::Key::Key_3:
         player->cast(2);
+        break;
+    case Qt::Key::Key_4:
+        player->cast(3);
         break;
     }
 

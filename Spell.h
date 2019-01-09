@@ -128,6 +128,27 @@ private:
     int tickTimer = 500;
 };
 
+class DarkorbsSpell: public Spell{
+public:
+    DarkorbsSpell()
+        : Spell(2500, 15, 9, noTarget)
+    {}
+    void cast(Character* caster) override;
+    void cast(Character* caster, Character* target) override {}
+    void cast(Character* caster, float worldX, float worldY) override {}
+};
 
+class DarkorbsEffect: public SpellEffect{
+public:
+    DarkorbsEffect(Character* caster, float displacementX, float displacementY, Animator animator, Map* m);
+    void update(int deltaT) override;
+
+private:
+    float displacementX, displacementY;
+    int dmg = 30;
+    float radius = 2;
+    float speed = 0;
+    Character* target = nullptr;
+};
 
 #endif // SPELL_H

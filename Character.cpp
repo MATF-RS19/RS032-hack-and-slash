@@ -49,7 +49,7 @@ void Character::update(int deltaT){
     for(int i = 0; i < spells.size(); i++)
         spells[i]->update(deltaT);
 
-    setZValue(mapI + mapJ);
+    setZValue(worldCoords.x() + worldCoords.y());
     orient();
 
     animator.setDefaultAnimation(orientation);
