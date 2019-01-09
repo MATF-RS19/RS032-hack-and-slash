@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QGraphicsPixmapItem>
 #include "Animator.h"
+#include "AnimatedItem.h"
 
 class Character;
 class Map;
@@ -75,6 +76,34 @@ private:
     Character* target;
     float speed = 0;
     float dmg = 10;
+};
+
+class FirestormSpell: public Spell {
+public:
+    FirestormSpell()
+        : Spell(8000, 15, 1, mapTarget)
+    {}
+    void cast(Character* caster) override {}
+    void cast(Character* caster, Character* target) override {}
+    void cast(Character* caster, float worldX, float worldY) override;
+
+private:
+    float range;
+};
+
+class FirestormEffect: public SpellEffect {
+public:
+    FirestormEffect(Character* caster, float worldX, float worldY, Animator animator, Map* m);
+    void update(int deltaT) override;
+
+private:
+    float worldX, worldY;
+    float dmg = 20;
+    QVector< AnimatedItem* > items;
+    float radius = 1.5;
+    int timer = 2000;
+    int scale = 0;
+
 };
 
 

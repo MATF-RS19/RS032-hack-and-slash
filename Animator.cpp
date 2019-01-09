@@ -26,11 +26,12 @@ bool Animator::Animation::nextFrame(int deltaT){
     if(elapsed > duration){
         elapsed -= duration;
         current++;
-        if(current > end)
-            if(looping)
-                current = start;
-            else
+        if(current > end) {
+            // proveri ovo opet !!!!
+            current = start;
+            if(!looping)
                 return false;
+        }
     }
     return true;
 }

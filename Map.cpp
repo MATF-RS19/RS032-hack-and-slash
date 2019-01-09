@@ -148,7 +148,11 @@ void Map::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     }
 
     if(inputState == targetMap && event->button() == Qt::MouseButton::RightButton) {
-        //castuj spell
+        QPointF pressPos = event->buttonDownScenePos(Qt::MouseButton::RightButton);
+        QVector2D tarPos = sceneToMap(QVector2D(pressPos.x(), pressPos.y()));
+
+        player->Character::cast(inputSpell, tarPos.x(), tarPos.y());
+
         inputState = normal;
     }
 
@@ -160,7 +164,11 @@ void Map::keyPressEvent(QKeyEvent* event) {
     case Qt::Key::Key_1:
         player->cast(0);
         break;
+    case Qt::Key::Key_2:
+        player->cast(1);
+        break;
     }
+
 
     QGraphicsScene::keyPressEvent(event);
 }
@@ -251,6 +259,14 @@ void Map::destroySpell(SpellEffect *spell){
     this->removeItem(spell);
 
     delete spell;
+}
+
+Character* Map::getEnemy(int i){
+    return enemies[i];
+}
+
+int Map::numberOfEnemies(){
+    return enemies.size();
 }
 
 bool Map::exists(int i, int j){

@@ -43,6 +43,8 @@ public:
     InputState getInputState();
     int getInputSpell();
     void setInputState(InputState state, int spell);
+    Character* getEnemy(int i);
+    int numberOfEnemies();
 
 private:
     QVector< QVector<int> > levelCollision;

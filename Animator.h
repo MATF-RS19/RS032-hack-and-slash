@@ -33,7 +33,7 @@ private:
         bool looping;
     };
     int currentAnimation;
-    int defaultAnimation;
+    int defaultAnimation = 0;
     int offsetX, offsetY;
     QVector<Animation> animations;
 };

@@ -3,6 +3,8 @@
 #include "Engine.h"
 #include "Map.h"
 
+#include <QtMath>
+
 void Spell::update(int deltaT) {
     cooldownTimer -= deltaT;
     if(cooldownTimer <= 0)
@@ -24,15 +26,18 @@ int Spell::getManaCost() {
 void SpellEffect::update(int deltaT) {
     animator.update(deltaT);
     setPixmap(animator.getCurrentFrame());
-}
 
+    QVector2D pos = m->mapToScene(QVector2D(worldX, worldY));
+    setPos(pos.x(), pos.y());
+    setZValue(worldX + worldY);
+
+}
 void FireballSpell::cast(Character* caster, Character* target){
     if(ready() && caster->getMana() >= manaCost && QVector2D(caster->getWorldCoords() - target->getWorldCoords()).length() < range){
         caster->drainMana(manaCost);
         FireballEffect* effect = new FireballEffect(caster, target, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
 
-        caster->getMap()->addItem(effect);
-        caster->getMap()->addSpell(effect);
+
 
         cooldownTimer = cooldown;
     }
@@ -42,6 +47,9 @@ FireballEffect::FireballEffect(Character* caster, Character* target, Animator an
     : SpellEffect(caster, animator, m, caster->getWorldCoords().x(), caster->getWorldCoords().y())
 {
     this->target = target;
+
+    m->addItem(this);
+    m->addSpell(this);
 }
 
 void FireballEffect::update(int deltaT){
@@ -59,14 +67,62 @@ void FireballEffect::update(int deltaT){
             worldY += speed * deltaT * direction.y();
             speed += 0.00005 * deltaT;
         }
-
-        QVector2D dest = m->mapToScene(QVector2D(worldX, worldY));
-        setPos(dest.x(), dest.y());
-        setZValue(worldX + worldY);
     }
     else {
         m->destroySpell(this);
     }
 }
 
+void FirestormSpell::cast(Character *caster, float worldX, float worldY){
+    if(ready() && caster->getMana() >= manaCost){
+        caster->drainMana(manaCost);
 
+        FirestormEffect* effect = new FirestormEffect(caster, worldX, worldY, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
+
+        cooldownTimer = cooldown;
+    }
+
+}
+
+FirestormEffect::FirestormEffect(Character* caster, float worldX, float worldY, Animator animator, Map* m)
+    : SpellEffect(caster, animator, m, worldX, worldY)
+{
+    m->addItem(this);
+    m->addSpell(this);
+
+    for(int i = 0; i < 6; i++){
+        QVector2D v = QVector2D(cos(i * M_PI/3), sin(i * M_PI/3));
+        QVector2D pos = m->mapToScene(QVector2D(worldX, worldY) + 0.75* radius * v);
+        items.push_back(new AnimatedItem(animator, pos.x(), pos.y(), worldX + worldY + 0.75*radius*(v.x() + v.y())));
+
+    }
+
+    for(int i = 0; i < items.size(); i++){
+        m->addItem(items[i]);
+    }
+
+    for(int i = 0; i < m->numberOfEnemies(); i++){
+        Character* enemy = m->getEnemy(i);
+        QVector2D enemyPos = enemy->getWorldCoords();
+        if(enemyPos.x() <= worldX + radius && enemyPos.y() <= worldY + radius)
+            enemy->takeDmg(dmg);
+    }
+}
+
+void FirestormEffect::update(int deltaT){
+    SpellEffect::update(deltaT);
+    for(int i = 0; i < items.size(); i++)
+        items[i]->update(deltaT);
+
+    scale += deltaT*0.1;
+
+    timer -= deltaT;
+    if(timer <= 0){
+        for(int i = 0; i < items.size(); i++) {
+            m->removeItem(items[i]);
+            delete items[i];
+        }
+        m->destroySpell(this);
+        return;
+    }
+}

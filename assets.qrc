@@ -15,5 +15,6 @@
         <file>Assets/chars.hsa</file>
         <file>Assets/Spells/fireball.png</file>
         <file>Assets/spells.hsa</file>
+        <file>Assets/Spells/firestorm.png</file>
     </qresource>
 </RCC>
