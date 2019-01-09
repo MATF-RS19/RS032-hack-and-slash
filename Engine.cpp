@@ -128,7 +128,7 @@ void Engine::run() {
             int offsetY = args[8].toInt();
             assetsSpells.push_back(Animator(QPixmap(name).scaledToWidth(width * dimX, Qt::SmoothTransformation), dimX, dimY, offsetX, offsetY));
         }
-        assetsSpells[assetsSpells.size() - 1].addAnimation(begin, end, duration, false);
+        assetsSpells[assetsSpells.size() - 1].addAnimation(begin, end, duration, true);
     }
 
     m = new Map(":Levels/test.hsl");
@@ -190,5 +190,7 @@ Spell* Engine::getSpell(int i){
         return new FirestormSpell();
     case 4:
         return new FireballSpell();
+    case 7:
+        return new DarkfogSpell();
     }
 }

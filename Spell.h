@@ -88,7 +88,7 @@ public:
     void cast(Character* caster, float worldX, float worldY) override;
 
 private:
-    float range;
+    float range = 3;
 };
 
 class FirestormEffect: public SpellEffect {
@@ -97,16 +97,36 @@ public:
     void update(int deltaT) override;
 
 private:
-    float worldX, worldY;
     float dmg = 20;
     QVector< AnimatedItem* > items;
     float radius = 1.5;
     int timer = 2000;
-    int scale = 0;
-
 };
 
+class DarkfogSpell: public Spell {
+public:
+    DarkfogSpell()
+        : Spell(2500, 15, 7, mapTarget)
+    {}
+    void cast(Character* caster) override {}
+    void cast(Character* caster, Character* target) override {}
+    void cast(Character* caster, float worldX, float worldY) override;
 
+private:
+    float range = 4;
+};
+
+class DarkfogEffect: public SpellEffect {
+public:
+    DarkfogEffect(Character* caster, float worldX, float worldY, Animator animator, Map* m);
+    void update(int deltaT) override;
+
+private:
+    float dmg = 3;
+    float radius = 2;
+    int timer = 10000;
+    int tickTimer = 500;
+};
 
 
 
