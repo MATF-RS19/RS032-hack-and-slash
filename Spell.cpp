@@ -290,11 +290,45 @@ void DarkbeadEffect::update(int deltaT){
             return;
         }
     }
-
 }
 
+void FlamethrowerSpell::cast(Character* caster, float worldX, float worldY){
+    if(ready() && caster->getMana() >= manaCost){
+        caster->drainMana(manaCost);
 
+        QVector2D dir = (QVector2D(worldX, worldY) - caster->getWorldCoords()).normalized();
+        for(int i = 0; i < 4; i++){
+            float dirX = caster->getWorldCoords().x() + (i+1)*0.5*dir.x();
+            float dirY = caster->getWorldCoords().y() + (i+1)*0.5*dir.y();
+            new FlamethrowerEffect(caster, dirX, dirY, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
+        }
+        cooldownTimer = cooldown;
+    }
+}
 
+FlamethrowerEffect::FlamethrowerEffect(Character* caster, float posX, float posY, Animator animator, Map* m)
+    : SpellEffect(caster, animator, m, posX, posY)
+{
+    for(int i = 0; i < m->numberOfEnemies(); i++){
+        Character* enemy = m->getEnemy(i);
+        if((QVector2D(worldX, worldY) - enemy->getWorldCoords()).length() < radius){
+            enemy->takeDmg(dmg);
+        }
+    }
+
+    m->addItem(this);
+    m->addSpell(this);
+}
+
+void FlamethrowerEffect::update(int deltaT){
+    SpellEffect::update(deltaT);
+
+    timer -= deltaT;
+    if(timer <= 0){
+        m->destroySpell(this);
+        return;
+    }
+}
 
 
 

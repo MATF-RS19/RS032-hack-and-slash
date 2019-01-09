@@ -197,4 +197,26 @@ private:
     float radius = 0.5;
 };
 
+class FlamethrowerSpell: public Spell {
+public:
+    FlamethrowerSpell()
+        : Spell(2500, 15, 2, mapTarget)
+    {}
+    void cast(Character* caster) override {}
+    void cast(Character* caster, Character* target) override {}
+    void cast(Character* caster, float worldX, float worldY) override;
+
+};
+
+class FlamethrowerEffect: public SpellEffect {
+public:
+    FlamethrowerEffect(Character* caster, float posX, float posY, Animator animator, Map* m);
+    void update(int deltaT) override;
+
+private:
+    int timer = 640;
+    int dmg = 30;
+    float radius = 0.5;
+};
+
 #endif // SPELL_H

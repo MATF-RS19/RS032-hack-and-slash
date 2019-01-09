@@ -20,5 +20,6 @@
         <file>Assets/Spells/darkorbs.png</file>
         <file>Assets/Spells/heal.png</file>
         <file>Assets/Spells/darkbead.png</file>
+        <file>Assets/Spells/flamethrower.png</file>
     </qresource>
 </RCC>

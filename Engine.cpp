@@ -188,6 +188,8 @@ Spell* Engine::getSpell(int i){
     switch(i) {
     case 1:
         return new FirestormSpell();
+    case 2:
+        return new FlamethrowerSpell();
     case 4:
         return new FireballSpell();
     case 5:
