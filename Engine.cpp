@@ -192,6 +192,8 @@ Spell* Engine::getSpell(int i){
         return new FireballSpell();
     case 5:
         return new HealSpell();
+    case 6:
+        return new DarkbeadSpell();
     case 7:
         return new DarkfogSpell();
     case 9:

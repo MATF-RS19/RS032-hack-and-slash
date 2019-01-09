@@ -74,7 +74,6 @@ void FireballEffect::update(int deltaT){
 }
 
 void FirestormSpell::cast(Character *caster, float worldX, float worldY){
-    QVector2D pos = caster->getMap()->mapToScene(QVector2D(worldX, worldY));
     if(ready() && caster->getMana() >= manaCost && (caster->getWorldCoords() - QVector2D(worldX, worldY)).length() < range ){
         caster->drainMana(manaCost);
 
@@ -247,6 +246,54 @@ void HealEffect::update(int deltaT){
         return;
     }
 }
+
+void DarkbeadSpell::cast(Character* caster, float worldX, float worldY){
+    if(ready() && caster->getMana() >= manaCost){
+        caster->drainMana(manaCost);
+
+        QVector2D dir = (QVector2D(worldX, worldY) - caster->getWorldCoords()).normalized();
+        for(int i = -1; i <= 1; i++){
+            float dirX = dir.x() * cos(2*i*M_PI/9) - dir.y() * sin(2*i*M_PI/9);
+            float dirY = dir.x() * sin(2*i*M_PI/9) + dir.y() * cos(2*i*M_PI/9);
+            new DarkbeadEffect(caster, dirX, dirY, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
+        }
+        cooldownTimer = cooldown;
+    }
+}
+
+DarkbeadEffect::DarkbeadEffect(Character* caster, float directionX, float directionY, Animator animator, Map* m)
+    : SpellEffect(caster, animator, m, caster->getWorldCoords().x(), caster->getWorldCoords().y())
+{
+    this->direction = QVector2D(directionX, directionY);
+
+    m->addItem(this);
+    m->addSpell(this);
+}
+
+void DarkbeadEffect::update(int deltaT){
+    SpellEffect::update(deltaT);
+
+    timer -= deltaT;
+    if(timer <= 0){
+        m->destroySpell(this);
+        return;
+    }
+
+    worldX += speed * deltaT * direction.x();
+    worldY += speed * deltaT * direction.y();
+
+    for(int i = 0; i < m->numberOfEnemies(); i++){
+        Character* enemy = m->getEnemy(i);
+        if((QVector2D(worldX, worldY) - enemy->getWorldCoords()).length() < radius){
+            enemy->takeDmg(dmg);
+            m->destroySpell(this);
+            return;
+        }
+    }
+
+}
+
+
 
 
 

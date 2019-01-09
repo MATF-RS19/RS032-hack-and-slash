@@ -3,6 +3,8 @@
 
 #include <QDebug>
 #include <QGraphicsPixmapItem>
+#include <QVector2D>
+
 #include "Animator.h"
 #include "AnimatedItem.h"
 
@@ -169,6 +171,30 @@ public:
 private:
     int hp = 10;
     int timer = 640;
+};
+
+class DarkbeadSpell: public Spell {
+public:
+    DarkbeadSpell()
+        : Spell(2500, 15, 6, mapTarget)
+    {}
+    void cast(Character* caster) override {}
+    void cast(Character* caster, Character* target) override {}
+    void cast(Character* caster, float worldX, float worldY) override;
+
+};
+
+class DarkbeadEffect: public SpellEffect {
+public:
+    DarkbeadEffect(Character* caster, float directionX, float directionY, Animator animator, Map* m);
+    void update(int deltaT) override;
+
+private:
+    int timer = 2000;
+    int dmg = 30;
+    QVector2D direction;
+    float speed = 0.01;
+    float radius = 0.5;
 };
 
 #endif // SPELL_H
