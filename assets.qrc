@@ -23,5 +23,6 @@
         <file>Assets/Spells/flamethrower.png</file>
         <file>Assets/Spells/slow.png</file>
         <file>Assets/Spells/silence.png</file>
+        <file>Assets/Spells/shield.png</file>
     </qresource>
 </RCC>

@@ -268,4 +268,24 @@ private:
     float radius = 2;
 };
 
+class ShieldSpell: public Spell {
+public:
+    ShieldSpell()
+        : Spell(2500, 15, 0, noTarget)
+    {}
+    void cast(Character* caster) override;
+    void cast(Character* caster, Character* target) override {}
+    void cast(Character* caster, float worldX, float worldY) override {}
+
+};
+
+class ShieldEffect: public SpellEffect {
+public:
+    ShieldEffect(Character* caster, Animator animator, Map* m);
+    void update(int deltaT) override;
+
+private:
+    int timer = 5000;
+};
+
 #endif // SPELL_H

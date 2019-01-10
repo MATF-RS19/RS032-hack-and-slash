@@ -1,5 +1,6 @@
 #include "Player.h"
 
+#include <QDebug>
 #include <cmath>
 
 void Player::mousePressEvent(QGraphicsSceneMouseEvent* event) {
@@ -12,6 +13,7 @@ void Player::keyPressEvent(QKeyEvent* event) {
 
 void Player::update(int deltaT){
     Character::update(deltaT);
+
     cam->ensureVisible(this, cam->getBorderX(), cam->getBorderY());
 }
 

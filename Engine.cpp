@@ -186,6 +186,8 @@ Animator Engine::getAssetSpell(int i){
 
 Spell* Engine::getSpell(int i){
     switch(i) {
+    case 0:
+        return new ShieldSpell();
     case 1:
         return new FirestormSpell();
     case 2:

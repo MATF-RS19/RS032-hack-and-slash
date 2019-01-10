@@ -408,4 +408,41 @@ void SilenceEffect::update(int deltaT){
     }
 }
 
+void ShieldSpell::cast(Character* caster){
+    if(ready() && caster->getMana() >= manaCost){
+        caster->drainMana(manaCost);
+
+        ShieldEffect* effect = new ShieldEffect(caster, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
+
+        cooldownTimer = cooldown;
+    }
+}
+
+ShieldEffect::ShieldEffect(Character* caster, Animator animator, Map* m)
+    : SpellEffect (caster, animator, m, caster->getWorldCoords().x(), caster->getWorldCoords().y())
+{
+    caster->setShield(true);
+
+    m->addItem(this);
+    m->addSpell(this);
+}
+
+void ShieldEffect::update(int deltaT){
+    SpellEffect::update(deltaT);
+    setZValue(this->zValue() + 0.1);
+
+    worldX = caster->getWorldCoords().x();
+    worldY = caster->getWorldCoords().y();
+
+    timer -= deltaT;
+    if(timer <= 0){
+        caster->setShield(false);
+        m->destroySpell(this);
+        return;
+    }
+}
+
+
+
+
 

@@ -39,6 +39,8 @@ public:
     int numberOfSpells();
     Spell* getSpell(int i);
 
+    void setShield(bool shield);
+
 protected:
     Map* world;
 
@@ -77,6 +79,8 @@ protected:
     int mana;
     int maxMana;
     int attackDmg;
+
+    bool shield;
 };
 
 

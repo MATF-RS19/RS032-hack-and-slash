@@ -41,6 +41,8 @@ Character::Character(Map* world, int health, float speed, int size, int coordI, 
 
     this->spells = spells;
 
+    shield = false;
+
     setOffset(-animator.getOffsetX(), -animator.getOffsetY());
     QVector2D pos = world->mapToScene(worldCoords);
     setPos(pos.x(), pos.y());
@@ -183,7 +185,11 @@ void Character::orient(){
 }
 
 void Character::takeDmg(int dmg){
-    health -= dmg;
+    if(shield)
+        health -= dmg/2;
+    else
+        health -= dmg;
+
     if(health <= 0)
         charState = dead;
     qDebug() << "dmg dealt to" << this;
@@ -220,6 +226,11 @@ void Character::setTarget(Character* target){
 Character* Character::getTarget() {
     return target;
 }
+
+void Character::setShield(bool shield){
+    this->shield = shield;
+}
+
 
 int Character::numberOfSpells(){
     return spells.size();
