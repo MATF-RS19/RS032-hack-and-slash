@@ -200,6 +200,8 @@ Spell* Engine::getSpell(int i){
         return new DarkbeadSpell();
     case 7:
         return new DarkfogSpell();
+    case 8:
+        return new SilenceSpell();
     case 9:
         return new DarkorbsSpell();
     }

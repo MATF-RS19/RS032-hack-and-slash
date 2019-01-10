@@ -22,5 +22,6 @@
         <file>Assets/Spells/darkbead.png</file>
         <file>Assets/Spells/flamethrower.png</file>
         <file>Assets/Spells/slow.png</file>
+        <file>Assets/Spells/silence.png</file>
     </qresource>
 </RCC>

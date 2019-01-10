@@ -36,6 +36,9 @@ public:
     void setSpeed(float v);
     float getSpeed();
 
+    int numberOfSpells();
+    Spell* getSpell(int i);
+
 protected:
     Map* world;
 

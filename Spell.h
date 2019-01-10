@@ -30,6 +30,7 @@ public:
     bool ready();
     CastType getType();
     int getManaCost();
+    void setCooldownTimer(int timer);
 
 protected:
     int cooldown;
@@ -240,6 +241,30 @@ public:
 private:
     int timer = 10000;
     float speed = 0.0005;
+    float radius = 2;
+};
+
+class SilenceSpell: public Spell {
+public:
+    SilenceSpell()
+        : Spell(2500, 15, 8, mapTarget)
+    {}
+    void cast(Character* caster) override {}
+    void cast(Character* caster, Character* target) override {}
+    void cast(Character* caster, float worldX, float worldY) override;
+
+private:
+    float range = 4;
+};
+
+class SilenceEffect: SpellEffect {
+public:
+    SilenceEffect(Character* caster, float directionX, float directionY, Animator animator, Map* m);
+    void update(int deltaT) override;
+
+private:
+    int timer = 640;
+    int cooldownEffect = 10000;
     float radius = 2;
 };
 

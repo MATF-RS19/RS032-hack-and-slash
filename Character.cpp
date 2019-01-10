@@ -221,6 +221,14 @@ Character* Character::getTarget() {
     return target;
 }
 
+int Character::numberOfSpells(){
+    return spells.size();
+}
+
+Spell* Character::getSpell(int i){
+    return spells[i];
+}
+
 int Character::getI(){
     return mapI;
 }

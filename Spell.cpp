@@ -23,6 +23,11 @@ int Spell::getManaCost() {
     return manaCost;
 }
 
+void Spell::setCooldownTimer(int timer){
+    cooldownTimer = timer;
+}
+
+
 void SpellEffect::update(int deltaT) {
     animator.update(deltaT);
     setPixmap(animator.getCurrentFrame());
@@ -33,7 +38,7 @@ void SpellEffect::update(int deltaT) {
 
 }
 void FireballSpell::cast(Character* caster, Character* target){
-    if(ready() && caster->getMana() >= manaCost && QVector2D(caster->getWorldCoords() - target->getWorldCoords()).length() < range){
+    if(ready() && caster->getMana() >= manaCost && QVector2D(caster->getWorldCoords() - target->getWorldCoords()).length() <= range){
         caster->drainMana(manaCost);
         FireballEffect* effect = new FireballEffect(caster, target, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
 
@@ -74,7 +79,7 @@ void FireballEffect::update(int deltaT){
 }
 
 void FirestormSpell::cast(Character *caster, float worldX, float worldY){
-    if(ready() && caster->getMana() >= manaCost && (caster->getWorldCoords() - QVector2D(worldX, worldY)).length() < range ){
+    if(ready() && caster->getMana() >= manaCost && (caster->getWorldCoords() - QVector2D(worldX, worldY)).length() <= range ){
         caster->drainMana(manaCost);
 
         FirestormEffect* effect = new FirestormEffect(caster, worldX, worldY, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
@@ -104,7 +109,7 @@ FirestormEffect::FirestormEffect(Character* caster, float worldX, float worldY, 
     for(int i = 0; i < m->numberOfEnemies(); i++){
         Character* enemy = m->getEnemy(i);
         QVector2D enemyPos = enemy->getWorldCoords();
-        if(enemyPos.x() <= worldX + radius && enemyPos.y() <= worldY + radius)
+        if(QVector2D(enemyPos - QVector2D(worldX, worldY)).length() <= radius)
             enemy->takeDmg(dmg);
     }
 }
@@ -126,7 +131,7 @@ void FirestormEffect::update(int deltaT){
 }
 
 void DarkfogSpell::cast(Character* caster, float worldX, float worldY){
-    if(ready() && caster->getMana() >= manaCost && (caster->getWorldCoords() - QVector2D(worldX, worldY)).length() < range ){
+    if(ready() && caster->getMana() >= manaCost && (caster->getWorldCoords() - QVector2D(worldX, worldY)).length() <= range ){
         caster->drainMana(manaCost);
 
         DarkfogEffect* effect = new DarkfogEffect(caster, worldX, worldY, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
@@ -151,7 +156,7 @@ void DarkfogEffect::update(int deltaT){
         for(int i = 0; i < m->numberOfEnemies(); i++){
             Character* enemy = m->getEnemy(i);
             QVector2D enemyPos = enemy->getWorldCoords();
-            if(enemyPos.x() <= worldX + radius && enemyPos.y() <= worldY + radius)
+            if(QVector2D(enemyPos - QVector2D(worldX, worldY)).length() <= radius)
                 enemy->takeDmg(dmg);
         }
         tickTimer = 500;
@@ -196,7 +201,7 @@ void DarkorbsEffect::update(int deltaT){
 
         for(int i = 0; i < m->numberOfEnemies(); i++){
             Character* enemy = m->getEnemy(i);
-            if((enemy->getWorldCoords()- caster->getWorldCoords() - QVector2D(displacementX, displacementY)).length() < radius){
+            if((enemy->getWorldCoords()- caster->getWorldCoords() - QVector2D(displacementX, displacementY)).length() <= radius){
                 target = enemy;
             }
         }
@@ -284,7 +289,7 @@ void DarkbeadEffect::update(int deltaT){
 
     for(int i = 0; i < m->numberOfEnemies(); i++){
         Character* enemy = m->getEnemy(i);
-        if((QVector2D(worldX, worldY) - enemy->getWorldCoords()).length() < radius){
+        if((QVector2D(worldX, worldY) - enemy->getWorldCoords()).length() <= radius){
             enemy->takeDmg(dmg);
             m->destroySpell(this);
             return;
@@ -311,7 +316,7 @@ FlamethrowerEffect::FlamethrowerEffect(Character* caster, float posX, float posY
 {
     for(int i = 0; i < m->numberOfEnemies(); i++){
         Character* enemy = m->getEnemy(i);
-        if((QVector2D(worldX, worldY) - enemy->getWorldCoords()).length() < radius){
+        if((QVector2D(worldX, worldY) - enemy->getWorldCoords()).length() <= radius){
             enemy->takeDmg(dmg);
         }
     }
@@ -354,7 +359,7 @@ void SlowEffect::update(int deltaT){
     for(int i = 0; i < m->numberOfEnemies(); i++){
         Character* enemy = m->getEnemy(i);
         QVector2D enemyPos = enemy->getWorldCoords();
-        if(enemyPos.x() <= worldX + radius && enemyPos.y() <= worldY + radius)
+        if(QVector2D(enemyPos - QVector2D(worldX, worldY)).length() <= radius)
             enemy->setSpeed(enemy->getSpeed() - speed);
     }
 
@@ -365,6 +370,42 @@ void SlowEffect::update(int deltaT){
     }
 }
 
+void SilenceSpell::cast(Character* caster, float worldX, float worldY){
+    if(ready() && caster->getMana() >= manaCost && (caster->getWorldCoords() - QVector2D(worldX, worldY)).length() < range){
+        caster->drainMana(manaCost);
 
+        SilenceEffect* effect = new SilenceEffect(caster, worldX, worldY, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
+
+        cooldownTimer = cooldown;
+    }
+}
+
+SilenceEffect::SilenceEffect(Character* caster, float worldX, float worldY, Animator animator, Map* m)
+    : SpellEffect(caster, animator, m, worldX, worldY)
+{
+    for(int i = 0; i < m->numberOfEnemies(); i++){
+        Character* enemy = m->getEnemy(i);
+        QVector2D enemyPos = enemy->getWorldCoords();
+
+        if(QVector2D(enemyPos - QVector2D(worldX, worldY)).length() <= radius){
+            for(int j = 0; j < enemy->numberOfSpells(); j++)
+                enemy->getSpell(j)->setCooldownTimer(cooldownEffect);
+        }
+    }
+
+    m->addItem(this);
+    m->addSpell(this);
+}
+
+void SilenceEffect::update(int deltaT){
+    SpellEffect::update(deltaT);
+    setZValue(worldX + worldY + 2);
+
+    timer -= deltaT;
+    if(timer <= 0){
+        m->destroySpell(this);
+        return;
+    }
+}
 
 
