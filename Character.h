@@ -10,8 +10,6 @@
 #include "Animator.h"
 #include "Spell.h"
 
-class Camera;
-
 class Character : public QGraphicsPixmapItem{
 public:
     Character(Map* world, int health, float speed, int size, int coordI, int coordJ, Animator animator, QVector<Spell*> spells);
@@ -39,6 +37,8 @@ public:
     int numberOfSpells();
     Spell* getSpell(int i);
 
+    int getMaxHealth();
+    int getMaxMana();
     void setShield(bool shield);
 
 protected:

@@ -3,6 +3,8 @@
 #include <QDebug>
 #include <cmath>
 
+#include "Camera.h"
+
 void Player::mousePressEvent(QGraphicsSceneMouseEvent* event) {
 
 }
@@ -18,7 +20,7 @@ void Player::update(int deltaT){
 }
 
 void Player::cast(int i) {
-    if(charState == ready && spells[i]->ready() && spells[i]->getManaCost() <= mana) {
+    if(spells[i]->ready() && spells[i]->getManaCost() <= mana) {
         switch(spells[i]->getType()) {
         case Spell::noTarget:
             spells[i]->cast(this);
@@ -30,10 +32,15 @@ void Player::cast(int i) {
             world->setInputState(Map::InputState::targetMap, i);
             break;
         }
+        charState = ready;
     }
 }
 
 void Player::setCam(Camera* camera){
     cam = camera;
+}
+
+Camera* Player::getCam() {
+    return cam;
 }
 

@@ -46,6 +46,8 @@ public:
     Character* getEnemy(int i);
     int numberOfEnemies();
 
+    void createUi();
+
 private:
     QVector< QVector<int> > levelCollision;
     QVector< QVector<int> > charCollision;

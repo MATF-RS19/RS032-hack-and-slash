@@ -27,6 +27,7 @@ public:
     Animator getAssetAnim(int i);
     Animator getAssetSpell(int i);
     Spell* getSpell(int i);
+    Map* getMap();
 
     Engine(Engine const&) = delete;
     void operator = (Engine const&) = delete;

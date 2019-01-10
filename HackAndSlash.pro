@@ -21,7 +21,8 @@ SOURCES += main.cpp \
     Animator.cpp \
     AnimatedItem.cpp \
     Enemy.cpp \
-    Spell.cpp
+    Spell.cpp \
+    UIController.cpp
 
 HEADERS  += \
     Player.h \
@@ -33,9 +34,11 @@ HEADERS  += \
     AnimatedItem.h \
     Enemy.h \
     Spell.h \
-    Consumable.h
+    Consumable.h \
+    UIController.h
 
-FORMS    +=
+FORMS    += \
+    MainWindow.ui
 
 RESOURCES += \
     assets.qrc

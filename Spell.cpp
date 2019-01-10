@@ -42,8 +42,6 @@ void FireballSpell::cast(Character* caster, Character* target){
         caster->drainMana(manaCost);
         FireballEffect* effect = new FireballEffect(caster, target, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
 
-
-
         cooldownTimer = cooldown;
     }
 }
@@ -77,6 +75,13 @@ void FireballEffect::update(int deltaT){
         m->destroySpell(this);
     }
 }
+
+void FireballEffect::onCharacterDeath(Character* character){
+    if(target == character)
+        m->destroySpell(this);
+
+}
+
 
 void FirestormSpell::cast(Character *caster, float worldX, float worldY){
     if(ready() && caster->getMana() >= manaCost && (caster->getWorldCoords() - QVector2D(worldX, worldY)).length() <= range ){
@@ -187,12 +192,15 @@ DarkorbsEffect::DarkorbsEffect(Character* caster, float displacementX, float dis
 {
     this->displacementX = displacementX;
     this->displacementY = displacementY;
+    this->target = nullptr;
     m->addItem(this);
     m->addSpell(this);
 }
 
 void DarkorbsEffect::update(int deltaT){
     SpellEffect::update(deltaT);
+
+    // qDebug() << target;
 
     // da li postoji, nije dovoljno !target
     if(!target){
@@ -220,6 +228,11 @@ void DarkorbsEffect::update(int deltaT){
             speed += 0.00001 * deltaT;
         }
     }
+}
+
+void DarkorbsEffect::onCharacterDeath(Character* character){
+    if(target == character)
+        m->destroySpell(this);
 }
 
 void HealSpell::cast(Character* caster){

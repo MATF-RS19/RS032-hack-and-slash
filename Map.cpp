@@ -4,6 +4,7 @@
 #include <QPainter>
 #include <QPixmap>
 #include <QGraphicsPixmapItem>
+#include <QGraphicsRectItem>
 #include <QFile>
 #include <QDebug>
 #include <QKeyEvent>
@@ -111,6 +112,32 @@ Map::Map(QString levelName){
             pic->setPos(mapToScene(matrixToMap(i, j)).x(), mapToScene(matrixToMap(i, j)).y());
             pic->setZValue(-1);
         }
+
+}
+
+void Map::createUi(){
+    QGraphicsRectItem* rect1 = new QGraphicsRectItem(-1280/2 + 10, -1024/2 + 10, player->getMaxHealth() * 5, 10);
+    rect1->setZValue(100000000);
+    rect1->setBrush(Qt::gray);
+
+    QGraphicsRectItem* hp = new QGraphicsRectItem(-1280/2 + 10, -1024/2 + 10, player->getHealth() * 5, 10);
+    hp->setBrush(Qt::red);
+    hp->setZValue(100000001);
+
+
+    QGraphicsRectItem* rect2 = new QGraphicsRectItem(-1280/2 + 10, -1024/2 + 10, player->getMaxMana() * 5, 10);
+    rect2->setBrush(Qt::gray);
+    rect2->setZValue(100000000);
+
+    QGraphicsRectItem* mana = new QGraphicsRectItem(-1280/2 + 10, -1024/2 + 25, player->getMana() * 5, 10);
+    mana->setBrush(Qt::blue);
+    mana->setZValue(100000001);
+
+
+    this->addItem(rect1);
+    this->addItem(hp);
+    this->addItem(rect2);
+    this->addItem(mana);
 }
 
 Player* Map::getPlayer(){
@@ -175,6 +202,9 @@ void Map::keyPressEvent(QKeyEvent* event) {
         break;
     case Qt::Key::Key_5:
         player->cast(4);
+        break;
+    case Qt::Key::Key_Escape:
+        inputState = normal;
         break;
     }
 
@@ -251,6 +281,9 @@ void Map::update(int deltaT){
 }
 
 void Map::destroyEnemy(Enemy *enemy){
+    for(int i = spells.size() - 1; i >= 0; i--)
+        spells[i]->onCharacterDeath(enemy);
+
     enemies.removeOne(enemy);
     this->removeItem(enemy);
     if(player->getTarget() == enemy)

@@ -11,6 +11,7 @@
 #include "Character.h"
 #include "Animator.h"
 #include "Spell.h"
+#include "UIController.h"
 
 void Engine::run() {
 
@@ -148,6 +149,8 @@ void Engine::run() {
 
     m->setCam(cam);
 
+    UIController::getInstance();
+
     QTimer* timer = new QTimer();
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(10);
@@ -168,7 +171,7 @@ Animator Engine::getAssetEnv(int i){
 
 void Engine::update() {
     m->update(10);
-
+    UIController::getInstance().update(10);
     //scene->update();
 }
 
@@ -178,6 +181,10 @@ CharTemplate Engine::getTemplate(int i){
 
 Animator Engine::getAssetAnim(int i){
     return assetsAnims[i];
+}
+
+Map* Engine::getMap(){
+    return m;
 }
 
 Animator Engine::getAssetSpell(int i){

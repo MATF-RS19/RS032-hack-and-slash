@@ -5,6 +5,8 @@
 #include <QVector2D>
 
 #include "Spell.h"
+#include "Map.h"
+#include "UIController.h"
 
 Character::Character(Map* world, int health, float speed, int size, int coordI, int coordJ, Animator animator, QVector<Spell*> spells): QGraphicsPixmapItem (){
     this->setPixmap(animator.getCurrentFrame());
@@ -34,9 +36,9 @@ Character::Character(Map* world, int health, float speed, int size, int coordI, 
     attackTimer = 0;
 
     this->health = health;
-    maxHealth = 300000;
-    mana = 100;
-    maxMana = 100;
+    maxHealth = health;
+    mana = 70;
+    maxMana = 70;
     attackDmg = 10;
 
     this->spells = spells;
@@ -152,6 +154,11 @@ int Character::getMana() {
     return mana;
 }
 
+int Character::getMaxMana(){
+    return maxMana;
+}
+
+
 void Character::orient(){
     QVector2D direction;
 
@@ -186,13 +193,14 @@ void Character::orient(){
 
 void Character::takeDmg(int dmg){
     if(shield)
-        health -= dmg/2;
-    else
-        health -= dmg;
+       dmg /= 2;
+
+    health -= dmg;
 
     if(health <= 0)
         charState = dead;
-    qDebug() << "dmg dealt to" << this;
+
+    UIController::getInstance().newCombatText(dmg, 1, worldCoords.x(), worldCoords.y());
 }
 
 void Character::drainMana(int amount) {
@@ -203,6 +211,9 @@ void Character::drainMana(int amount) {
 
 void Character::heal(int hp){
     health += hp;
+
+    UIController::getInstance().newCombatText(hp, 0, worldCoords.x(), worldCoords.y());
+
     if(health > maxHealth)
         health = maxHealth;
 }
@@ -250,6 +261,10 @@ int Character::getJ(){
 
 int Character::getSize(){
     return size;
+}
+
+int Character::getMaxHealth(){
+    return maxHealth;
 }
 
 void Character::setDestination(int i, int j) {

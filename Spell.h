@@ -31,6 +31,7 @@ public:
     CastType getType();
     int getManaCost();
     void setCooldownTimer(int timer);
+    virtual QString icon() { return ""; }
 
 protected:
     int cooldown;
@@ -48,6 +49,7 @@ public:
         : caster(caster), animator(animator), m(m), worldX(worldX), worldY(worldY)
     {setOffset(-animator.getOffsetX(), -animator.getOffsetY()); }
     virtual void update(int deltaT);
+    virtual void onCharacterDeath(Character* character) {}
 
 protected:
     float worldX, worldY;
@@ -65,6 +67,7 @@ public:
     void cast(Character* caster) override {}
     void cast(Character* caster, Character* target) override;
     void cast(Character* caster, float worldX, float worldY) override {}
+    QString icon() override { return ":/Assets/UI/Icons/fireball.png"; }
 
 private:
     float range = 4;
@@ -74,6 +77,7 @@ class FireballEffect: public SpellEffect {
 public:
     FireballEffect(Character* caster, Character* target, Animator animator, Map* m);
     void update(int deltaT) override;
+    void onCharacterDeath(Character* character) override;
 
 private:
     Character* target;
@@ -89,6 +93,7 @@ public:
     void cast(Character* caster) override {}
     void cast(Character* caster, Character* target) override {}
     void cast(Character* caster, float worldX, float worldY) override;
+    QString icon() override { return ":/Assets/UI/Icons/firestorm.png"; }
 
 private:
     float range = 3;
@@ -98,6 +103,7 @@ class FirestormEffect: public SpellEffect {
 public:
     FirestormEffect(Character* caster, float worldX, float worldY, Animator animator, Map* m);
     void update(int deltaT) override;
+    void onCharacterDeath(Character* character) override {}
 
 private:
     float dmg = 20;
@@ -114,6 +120,7 @@ public:
     void cast(Character* caster) override {}
     void cast(Character* caster, Character* target) override {}
     void cast(Character* caster, float worldX, float worldY) override;
+    QString icon() override { return ":/Assets/UI/Icons/darkfog.png"; }
 
 private:
     float range = 4;
@@ -123,6 +130,8 @@ class DarkfogEffect: public SpellEffect {
 public:
     DarkfogEffect(Character* caster, float worldX, float worldY, Animator animator, Map* m);
     void update(int deltaT) override;
+    void onCharacterDeath(Character* character) override {}
+
 
 private:
     float dmg = 3;
@@ -139,12 +148,14 @@ public:
     void cast(Character* caster) override;
     void cast(Character* caster, Character* target) override {}
     void cast(Character* caster, float worldX, float worldY) override {}
+    QString icon() override { return ":/Assets/UI/Icons/darkorbs.png"; }
 };
 
 class DarkorbsEffect: public SpellEffect{
 public:
     DarkorbsEffect(Character* caster, float displacementX, float displacementY, Animator animator, Map* m);
     void update(int deltaT) override;
+    void onCharacterDeath(Character* character) override;
 
 private:
     float displacementX, displacementY;
@@ -162,12 +173,14 @@ public:
     void cast(Character* caster) override;
     void cast(Character* caster, Character* target) override {}
     void cast(Character* caster, float worldX, float worldY) override {}
+    QString icon() override { return ":/Assets/UI/Icons/heal.png"; }
 };
 
 class HealEffect: public SpellEffect {
 public:
     HealEffect(Character* caster, Animator animator, Map* m);
     void update(int deltaT) override;
+    void onCharacterDeath(Character* character) override {}
 
 private:
     int hp = 10;
@@ -182,6 +195,7 @@ public:
     void cast(Character* caster) override {}
     void cast(Character* caster, Character* target) override {}
     void cast(Character* caster, float worldX, float worldY) override;
+    QString icon() override { return ":/Assets/UI/Icons/darkbead.png"; }
 
 };
 
@@ -189,6 +203,8 @@ class DarkbeadEffect: public SpellEffect {
 public:
     DarkbeadEffect(Character* caster, float directionX, float directionY, Animator animator, Map* m);
     void update(int deltaT) override;
+    void onCharacterDeath(Character* character) override {}
+
 
 private:
     int timer = 2000;
@@ -206,6 +222,7 @@ public:
     void cast(Character* caster) override {}
     void cast(Character* caster, Character* target) override {}
     void cast(Character* caster, float worldX, float worldY) override;
+    QString icon() override { return ":/Assets/UI/Icons/flamethrower.png"; }
 
 };
 
@@ -213,6 +230,7 @@ class FlamethrowerEffect: public SpellEffect {
 public:
     FlamethrowerEffect(Character* caster, float posX, float posY, Animator animator, Map* m);
     void update(int deltaT) override;
+    void onCharacterDeath(Character* character) override {}
 
 private:
     int timer = 640;
@@ -228,6 +246,7 @@ public:
     void cast(Character* caster) override {}
     void cast(Character* caster, Character* target) override {}
     void cast(Character* caster, float worldX, float worldY) override;
+    QString icon() override { return ":/Assets/UI/Icons/slow.png"; }
 
 private:
     float range = 4;
@@ -237,6 +256,8 @@ class SlowEffect: public SpellEffect {
 public:
     SlowEffect(Character* caster, float directionX, float directionY, Animator animator, Map* m);
     void update(int deltaT) override;
+    void onCharacterDeath(Character* character) override {}
+
 
 private:
     int timer = 10000;
@@ -252,6 +273,7 @@ public:
     void cast(Character* caster) override {}
     void cast(Character* caster, Character* target) override {}
     void cast(Character* caster, float worldX, float worldY) override;
+    QString icon() override { return ":/Assets/UI/Icons/silence.png"; }
 
 private:
     float range = 4;
@@ -261,6 +283,7 @@ class SilenceEffect: SpellEffect {
 public:
     SilenceEffect(Character* caster, float directionX, float directionY, Animator animator, Map* m);
     void update(int deltaT) override;
+    void onCharacterDeath(Character* character) override {}
 
 private:
     int timer = 640;
@@ -276,6 +299,7 @@ public:
     void cast(Character* caster) override;
     void cast(Character* caster, Character* target) override {}
     void cast(Character* caster, float worldX, float worldY) override {}
+    QString icon() override { return ":/Assets/UI/Icons/shield.png"; }
 
 };
 
@@ -283,6 +307,7 @@ class ShieldEffect: public SpellEffect {
 public:
     ShieldEffect(Character* caster, Animator animator, Map* m);
     void update(int deltaT) override;
+    void onCharacterDeath(Character* character) override {}
 
 private:
     int timer = 5000;

@@ -14,6 +14,7 @@ public:
     void keyPressEvent(QKeyEvent* event) override;
     void update(int deltaT) override;
     void setCam(Camera* camera);
+    Camera* getCam();
     void cast(int i);
 
 private:

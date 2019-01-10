@@ -24,5 +24,19 @@
         <file>Assets/Spells/slow.png</file>
         <file>Assets/Spells/silence.png</file>
         <file>Assets/Spells/shield.png</file>
+        <file>Assets/Tiles/DirtDark.png</file>
+        <file>Assets/Tiles/Grass.png</file>
+        <file>Assets/UI/spellbar.png</file>
+        <file>Assets/UI/spellbarbg.png</file>
+        <file>Assets/UI/Icons/darkbead.png</file>
+        <file>Assets/UI/Icons/darkfog.png</file>
+        <file>Assets/UI/Icons/darkorbs.png</file>
+        <file>Assets/UI/Icons/fireball.png</file>
+        <file>Assets/UI/Icons/firestorm.png</file>
+        <file>Assets/UI/Icons/flamethrower.png</file>
+        <file>Assets/UI/Icons/heal.png</file>
+        <file>Assets/UI/Icons/shield.png</file>
+        <file>Assets/UI/Icons/silence.png</file>
+        <file>Assets/UI/Icons/slow.png</file>
     </qresource>
 </RCC>
