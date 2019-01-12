@@ -6,6 +6,7 @@
 
 #include "Spell.h"
 #include "Map.h"
+#include "Engine.h"
 #include "UIController.h"
 
 Character::Character(Map* world, int health, float speed, int size, int coordI, int coordJ, Animator animator, QVector<Spell*> spells): QGraphicsPixmapItem (){
@@ -47,14 +48,14 @@ Character::Character(Map* world, int health, float speed, int size, int coordI, 
 
     setOffset(-animator.getOffsetX(), -animator.getOffsetY());
     QVector2D pos = world->mapToScene(worldCoords);
-    setPos(pos.x(), pos.y());
+    setPos(double(pos.x()), double(pos.y()));
 }
 
 void Character::update(int deltaT){
     for(int i = 0; i < spells.size(); i++)
         spells[i]->update(deltaT);
 
-    setZValue(worldCoords.x() + worldCoords.y());
+    setZValue(double(worldCoords.x() + worldCoords.y()));
     orient();
 
     animator.setDefaultAnimation(orientation);
@@ -91,7 +92,7 @@ void Character::update(int deltaT){
     }
     if(charState == ready){
         if(target != nullptr){
-            double dist = sqrt(pow(target->getI() - getI(), 2) + pow(target->getJ() - getJ(), 2));
+            float dist = float(sqrt(pow(target->getI() - getI(), 2) + pow(target->getJ() - getJ(), 2)));
             if(dist < attackRange && attackTimer == 0) {
                 charState = attacking;
                 destI = getI();
@@ -116,21 +117,26 @@ void Character::update(int deltaT){
     }
 
     if(attackTimer || charState == attacking){
+        if(attackTimer == deltaT*38)
+            Engine::getInstance().playSound("./Assets/Sounds/SwordSwipe.mp3");
         attackTimer += deltaT;
         if(attackTimer > attackCooldown)
             attackTimer = 0;
     }
 
     if(charState == attacked){
+
         if(dealDmg && target){
+
             target->takeDmg(attackDmg);
+
         }
         if(attackTimer == 0)
             charState = ready;
     }
 
     QVector2D sceneCoords = this->world->mapToScene(worldCoords);
-    setPos(sceneCoords.x(), sceneCoords.y());
+    setPos(double(sceneCoords.x()), double(sceneCoords.y()));
     movementSpeed = defaultSpeed;
 }
 
@@ -167,27 +173,27 @@ void Character::orient(){
     else if(charState == attacking && target != nullptr)
         direction = QVector2D(target->worldCoords - worldCoords);
 
-    if(direction.length() < 0.01)
+    if(direction.length() < 0.01f)
         return;
     direction.normalize();
 
-    double s = sqrt(2)/2;
+    float s = float(sqrt(2)/2);
 
-    if((direction - QVector2D(1, 0)).length() < 0.01)
+    if((direction - QVector2D(1, 0)).length() < 0.01f)
         orientation = 1;
-    if((direction - QVector2D(s, s)).length() < 0.5)
+    if((direction - QVector2D(s, s)).length() < 0.5f)
         orientation = 2;
-    if((direction - QVector2D(0, 1)).length() < 0.01)
+    if((direction - QVector2D(0, 1)).length() < 0.01f)
         orientation = 3;
-    if((direction - QVector2D(-s, s)).length() < 0.5)
+    if((direction - QVector2D(-s, s)).length() < 0.5f)
         orientation = 4;
-    if((direction - QVector2D(-1, 0)).length() < 0.01)
+    if((direction - QVector2D(-1, 0)).length() < 0.01f)
         orientation = 5;
-    if((direction - QVector2D(-s, -s)).length() < 0.5)
+    if((direction - QVector2D(-s, -s)).length() < 0.5f)
         orientation = 6;
-    if((direction - QVector2D(0, -1)).length() < 0.01)
+    if((direction - QVector2D(0, -1)).length() < 0.01f)
         orientation = 7;
-    if((direction - QVector2D(s, -s)).length() < 0.5)
+    if((direction - QVector2D(s, -s)).length() < 0.5f)
         orientation = 0;
 }
 
@@ -272,4 +278,9 @@ void Character::setDestination(int i, int j) {
         destI = i;
         destJ = j;
     }
+}
+
+Character::~Character(){
+    for(int i = 0; i < numberOfSpells(); i++)
+        delete spells[i];
 }

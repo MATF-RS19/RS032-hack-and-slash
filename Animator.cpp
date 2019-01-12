@@ -77,3 +77,4 @@ QPixmap Animator::getCurrentFrame(){
 
     return frames.copy(width * x, heigth * y, width, heigth);
 }
+

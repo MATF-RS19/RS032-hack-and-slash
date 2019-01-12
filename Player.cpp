@@ -4,19 +4,18 @@
 #include <cmath>
 
 #include "Camera.h"
+#include "Engine.h"
 
-void Player::mousePressEvent(QGraphicsSceneMouseEvent* event) {
-
-}
-
-void Player::keyPressEvent(QKeyEvent* event) {
-
-}
 
 void Player::update(int deltaT){
     Character::update(deltaT);
 
-    cam->ensureVisible(this, cam->getBorderX(), cam->getBorderY());
+    if(charState == dead){
+        Engine::getInstance().endGame();
+        return;
+    }
+
+    Engine::getInstance().getCam()->focusOn(this);
 }
 
 void Player::cast(int i) {
@@ -36,11 +35,4 @@ void Player::cast(int i) {
     }
 }
 
-void Player::setCam(Camera* camera){
-    cam = camera;
-}
-
-Camera* Player::getCam() {
-    return cam;
-}
 

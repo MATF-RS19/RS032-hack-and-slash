@@ -9,7 +9,7 @@ CombatText::CombatText(int amount, bool dmg, float worldX, float worldY)
 {
 
     setZValue(1000);
-    setPos(worldX, worldY);
+    setPos(double(worldX), double(worldY));
     if(dmg)
         setDefaultTextColor(Qt::red);
     else
@@ -33,13 +33,11 @@ void UIController::newCombatText(int amount, bool dmg, float worldX, float world
 }
 
 void UIController::destroyCombatText(CombatText* text){
+    Map* m = Engine::getInstance().getMap();
+
     m->removeItem(text);
     combat.removeOne(text);
     delete text;
-}
-
-void UIController::setMap(Map* m){
-    this->m = m;
 }
 
 UIController& UIController::getInstance(){
@@ -48,10 +46,12 @@ UIController& UIController::getInstance(){
     return instance;
 }
 
-UIController::UIController() {
-    this->m = Engine::getInstance().getMap();
+UIController::UIController() {}
 
-    QPointF healthbarPos = m->getPlayer()->getCam()->mapToScene(10, 10);
+void UIController::load() {
+    Map* m = Engine::getInstance().getMap();
+
+    QPointF healthbarPos = Engine::getInstance().getCam()->mapToScene(10, 10);
     healthbarfull = new QGraphicsRectItem(healthbarPos.x(), healthbarPos.y(), 5 * m->getPlayer()->getMaxHealth(), 10);
     //healthbarfull->setFlags(QGraphicsItem::ItemIgnoresTransformations);
     healthbarfull->setZValue(1000);
@@ -64,7 +64,7 @@ UIController::UIController() {
     m->addItem(healthbar);
 
 
-    QPointF manabarPos = m->getPlayer()->getCam()->mapToScene(10, 25);
+    QPointF manabarPos = Engine::getInstance().getCam()->mapToScene(10, 25);
     manabarfull = new QGraphicsRectItem(manabarPos.x(), manabarPos.y(), 5 * m->getPlayer()->getMaxMana(), 10);
     //healthbarfull->setFlags(QGraphicsItem::ItemIgnoresTransformations);
     manabarfull->setZValue(1000);
@@ -76,9 +76,9 @@ UIController::UIController() {
     manabar->setBrush(Qt::blue);
     m->addItem(manabar);
 
-    barBackground;
+    //barBackground;
 
-    QPointF spellbarPos = m->getPlayer()->getCam()->mapToScene(10, 1000);
+    QPointF spellbarPos = Engine::getInstance().getCam()->mapToScene(10, 1000);
     spellbar = new QGraphicsPixmapItem(QPixmap(":/Assets/UI/spellbar.png").scaledToWidth(300, Qt::SmoothTransformation));
     spellbar->setPos(spellbarPos);
     spellbar->setZValue(1003);
@@ -98,19 +98,20 @@ UIController::UIController() {
         spells.push_back(icon);
         m->addItem(icon);
     }
-
 }
 
 void UIController::update(int deltaT) {
-    QPointF healthbarPos = m->getPlayer()->getCam()->mapToScene(10, 10);
+    Map* m = Engine::getInstance().getMap();
+
+    QPointF healthbarPos = Engine::getInstance().getCam()->mapToScene(10, 10);
     healthbarfull->setRect(healthbarPos.x(), healthbarPos.y(), 5 * m->getPlayer()->getMaxHealth(), 10);
     healthbar->setRect(healthbarPos.x(), healthbarPos.y(), 5 * m->getPlayer()->getHealth(), 10);
 
-    QPointF manabarPos = m->getPlayer()->getCam()->mapToScene(10, 25);
+    QPointF manabarPos = Engine::getInstance().getCam()->mapToScene(10, 25);
     manabarfull->setRect(manabarPos.x(), manabarPos.y(), 5 * m->getPlayer()->getMaxMana(), 10);
     manabar->setRect(manabarPos.x(), manabarPos.y(), 5 * m->getPlayer()->getMana(), 10);
 
-    QPointF spellbarPos = m->getPlayer()->getCam()->mapToScene(10, 900);
+    QPointF spellbarPos = Engine::getInstance().getCam()->mapToScene(10, 900);
     spellbar->setPos(spellbarPos);
     spellbarbg->setPos(spellbarPos);
 
@@ -121,4 +122,44 @@ void UIController::update(int deltaT) {
 
     for(int i = 0; i < combat.size(); i++)
         combat[i]->update(deltaT);
+}
+
+void UIController::reset(){
+    qDebug() << "reset begin";
+    Map* m = Engine::getInstance().getMap();
+
+    m->removeItem(healthbarfull);
+    delete healthbarfull;
+
+    m->removeItem(healthbar);
+    delete healthbar;
+
+    m->removeItem(manabarfull);
+    delete manabarfull;
+
+    m->removeItem(manabar);
+    delete manabar;
+
+//    m->removeItem(barBackground);
+//    delete barBackground;
+
+    m->removeItem(spellbar);
+    delete spellbar;
+
+    m->removeItem(spellbarbg);
+    delete spellbarbg;
+
+    for(int i = 0; i < spells.size(); i++){
+        m->removeItem(spells[i]);
+        delete spells[i];
+    }
+    spells.clear();
+
+    for(int i = 0; i < combat.size(); i++){
+        m->removeItem(combat[i]);
+        delete combat[i];
+    }
+    combat.clear();
+
+    qDebug() << "reset end";
 }

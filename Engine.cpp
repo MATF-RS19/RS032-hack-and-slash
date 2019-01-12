@@ -6,6 +6,8 @@
 #include <QTransform>
 #include <QDebug>
 #include <QFile>
+#include <QtMultimedia/QMediaPlayer>
+#include <QUrl>
 
 #include "Map.h"
 #include "Character.h"
@@ -14,6 +16,7 @@
 #include "UIController.h"
 
 void Engine::run() {
+    stopSound();
 
     QFile fileTiles(":/Assets/tiles.hsa");
     fileTiles.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -132,27 +135,29 @@ void Engine::run() {
         assetsSpells[assetsSpells.size() - 1].addAnimation(begin, end, duration, true);
     }
 
-    m = new Map(":Levels/test.hsl");
+    fileSpells.close();
 
-    cam = new Camera(m, 20, 20);
+    if(!m)
+        m = new Map(":/Levels/test.hsl");
+    else
+        m->loadMap(":/Levels/test.hsl");
+
+    if(!cam)
+        cam = new Camera(m, 20, 20);
+    else
+        cam->setScene(m);
 
     cam->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     cam->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    cam->show();
-    cam->setFixedSize(1280, 1024);
+    cam->showFullScreen();
     m->setSceneRect(-1280/2, -1024/2, 1280, 1024);
 
-    //ch = new Player(m, 1, 1, 1, assetsAnims[0]);
+    UIController::getInstance().load();
 
-    //m->setPlayer(ch);
-    //m->addItem(ch);
-
-    m->setCam(cam);
-
-    UIController::getInstance();
-
-    QTimer* timer = new QTimer();
-    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+    if(!timer) {
+        timer = new QTimer();
+        connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+    }
     timer->start(10);
 }
 
@@ -171,7 +176,9 @@ Animator Engine::getAssetEnv(int i){
 
 void Engine::update() {
     m->update(10);
+    qDebug() << "asdfasdf";
     UIController::getInstance().update(10);
+    qDebug() << "asdfasdfasdf";
     //scene->update();
 }
 
@@ -189,6 +196,53 @@ Map* Engine::getMap(){
 
 Animator Engine::getAssetSpell(int i){
     return assetsSpells[i];
+}
+
+void Engine::playSound(QString path, int volume){
+    if(!sound)
+        sound = new QMediaPlayer();
+
+    sound->setMedia(QUrl(path));
+    sound->setVolume(volume);
+    sound->play();
+}
+
+void Engine::stopSound(){
+    sound->stop();
+}
+
+void Engine::setMainWindow(MainWindow* w){
+    this->w = w;
+}
+
+void Engine::endGame(){
+    timer->stop();
+    //delete timer;
+
+    UIController::getInstance().reset();
+
+    cam->setScene(0);
+    cam->hide();
+    //m->clear();
+    m->clearMap();
+    //m = nullptr;
+    //delete m;
+
+    //delete m;
+    //delete cam;
+
+
+    charTemplates.clear();
+    assetsTiles.clear();
+    assetsAnims.clear();
+    assetsEnv.clear();
+    assetsSpells.clear();
+
+    w->showWindow();
+}
+
+Camera* Engine::getCam(){
+    return cam;
 }
 
 Spell* Engine::getSpell(int i){

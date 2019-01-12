@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets multimedia
 
 TARGET = HackAndSlashDemo
 TEMPLATE = app
@@ -22,7 +22,12 @@ SOURCES += main.cpp \
     AnimatedItem.cpp \
     Enemy.cpp \
     Spell.cpp \
-    UIController.cpp
+    UIController.cpp \
+    MainWindow.cpp \
+    AboutWindow.cpp \
+    ChooseWindow.cpp \
+    MainWindow.cpp \
+    LoadingScreen.cpp
 
 HEADERS  += \
     Player.h \
@@ -34,11 +39,19 @@ HEADERS  += \
     AnimatedItem.h \
     Enemy.h \
     Spell.h \
-    Consumable.h \
-    UIController.h
+    UIController.h \
+    MainWindow.h \
+    AboutWindow.h \
+    ChooseWindow.h \
+    MainWindow.h \
+    LoadingScreen.h
 
 FORMS    += \
-    MainWindow.ui
+    MainWindow.ui \
+    AboutWindow.ui \
+    ChooseWindow.ui \
+    MainWindow.ui \
+    LoadingScreen.ui
 
 RESOURCES += \
     assets.qrc

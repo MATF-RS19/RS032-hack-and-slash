@@ -33,15 +33,14 @@ void SpellEffect::update(int deltaT) {
     setPixmap(animator.getCurrentFrame());
 
     QVector2D pos = m->mapToScene(QVector2D(worldX, worldY));
-    setPos(pos.x(), pos.y());
-    setZValue(worldX + worldY);
+    setPos(double(pos.x()), double(pos.y()));
+    setZValue(double(worldX + worldY));
 
 }
 void FireballSpell::cast(Character* caster, Character* target){
     if(ready() && caster->getMana() >= manaCost && QVector2D(caster->getWorldCoords() - target->getWorldCoords()).length() <= range){
         caster->drainMana(manaCost);
-        FireballEffect* effect = new FireballEffect(caster, target, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
-
+        new FireballEffect(caster, target, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
         cooldownTimer = cooldown;
     }
 }
@@ -49,6 +48,7 @@ void FireballSpell::cast(Character* caster, Character* target){
 FireballEffect::FireballEffect(Character* caster, Character* target, Animator animator, Map* m)
     : SpellEffect(caster, animator, m, caster->getWorldCoords().x(), caster->getWorldCoords().y())
 {
+    Engine::getInstance().playSound("./Assets/Sounds/FireballCast.wav");
     this->target = target;
 
     m->addItem(this);
@@ -61,6 +61,7 @@ void FireballEffect::update(int deltaT){
     if(target){
         QVector2D direction = QVector2D(target->getWorldCoords() - QVector2D(worldX, worldY));
         if(direction.length() < speed * deltaT * 2) {
+            Engine::getInstance().playSound("./Assets/Sounds/FireballImpact.wav");
             target->takeDmg(dmg);
             target = nullptr;
         }
@@ -68,7 +69,7 @@ void FireballEffect::update(int deltaT){
             direction.normalize();
             worldX += speed * deltaT * direction.x();
             worldY += speed * deltaT * direction.y();
-            speed += 0.00005 * deltaT;
+            speed += 0.00005f * deltaT;
         }
     }
     else {
@@ -87,7 +88,7 @@ void FirestormSpell::cast(Character *caster, float worldX, float worldY){
     if(ready() && caster->getMana() >= manaCost && (caster->getWorldCoords() - QVector2D(worldX, worldY)).length() <= range ){
         caster->drainMana(manaCost);
 
-        FirestormEffect* effect = new FirestormEffect(caster, worldX, worldY, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
+        new FirestormEffect(caster, worldX, worldY, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
 
         cooldownTimer = cooldown;
     }
@@ -97,13 +98,15 @@ void FirestormSpell::cast(Character *caster, float worldX, float worldY){
 FirestormEffect::FirestormEffect(Character* caster, float worldX, float worldY, Animator animator, Map* m)
     : SpellEffect(caster, animator, m, worldX, worldY)
 {
+    Engine::getInstance().playSound("./Assets/Sounds/Firestorm.wav");
+
     m->addItem(this);
     m->addSpell(this);
 
     for(int i = 0; i < 6; i++){
-        QVector2D v = QVector2D(cos(i * M_PI/3), sin(i * M_PI/3));
-        QVector2D pos = m->mapToScene(QVector2D(worldX, worldY) + 0.75* radius * v);
-        items.push_back(new AnimatedItem(animator, pos.x(), pos.y(), worldX + worldY + 0.75*radius*(v.x() + v.y())));
+        QVector2D v = QVector2D(float(cos(i * M_PI/3)), float(sin(i * M_PI/3)));
+        QVector2D pos = m->mapToScene(QVector2D(worldX, worldY) + 0.75f * radius * v);
+        items.push_back(new AnimatedItem(animator, int(pos.x()), int(pos.y()), int(worldX + worldY + 0.75f *radius*(v.x() + v.y()))));
 
     }
 
@@ -139,7 +142,7 @@ void DarkfogSpell::cast(Character* caster, float worldX, float worldY){
     if(ready() && caster->getMana() >= manaCost && (caster->getWorldCoords() - QVector2D(worldX, worldY)).length() <= range ){
         caster->drainMana(manaCost);
 
-        DarkfogEffect* effect = new DarkfogEffect(caster, worldX, worldY, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
+        new DarkfogEffect(caster, worldX, worldY, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
 
         cooldownTimer = cooldown;
     }
@@ -154,7 +157,7 @@ DarkfogEffect::DarkfogEffect(Character* caster, float worldX, float worldY, Anim
 
 void DarkfogEffect::update(int deltaT){
     SpellEffect::update(deltaT);
-    setZValue(worldX + worldY + 2);
+    setZValue(double(worldX + worldY + 2));
 
     tickTimer -= deltaT;
     if(tickTimer <= 0){
@@ -179,7 +182,7 @@ void DarkorbsSpell::cast(Character* caster){
         caster->drainMana(manaCost);
 
         for(int i = 0; i < 3; i++){
-            QVector2D v = 0.5 * QVector2D(cos(i * 2*M_PI/3), sin(i * 2*M_PI/3));
+            QVector2D v = 0.5 * QVector2D(float(cos(i * 2*M_PI/3)), float(sin(i * 2*M_PI/3)));
             new DarkorbsEffect(caster, v.x(), v.y(), Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
         }
 
@@ -190,6 +193,8 @@ void DarkorbsSpell::cast(Character* caster){
 DarkorbsEffect::DarkorbsEffect(Character* caster, float displacementX, float displacementY, Animator animator, Map* m)
     : SpellEffect(caster, animator, m, caster->getWorldCoords().x() + displacementX, caster->getWorldCoords().y() + displacementY)
 {
+    Engine::getInstance().playSound("./Assets/Sounds/Darkorbs.mp3");
+
     this->displacementX = displacementX;
     this->displacementY = displacementY;
     this->target = nullptr;
@@ -199,8 +204,6 @@ DarkorbsEffect::DarkorbsEffect(Character* caster, float displacementX, float dis
 
 void DarkorbsEffect::update(int deltaT){
     SpellEffect::update(deltaT);
-
-    // qDebug() << target;
 
     // da li postoji, nije dovoljno !target
     if(!target){
@@ -217,6 +220,7 @@ void DarkorbsEffect::update(int deltaT){
     else {
         QVector2D direction = QVector2D(target->getWorldCoords() - QVector2D(worldX, worldY));
         if(direction.length() < speed * deltaT * 2) {
+            Engine::getInstance().playSound("./Assets/Sounds/Darkorbs.mp3");
             target->takeDmg(dmg);
             target = nullptr;
             m->destroySpell(this);
@@ -225,7 +229,7 @@ void DarkorbsEffect::update(int deltaT){
             direction.normalize();
             worldX += speed * deltaT * direction.x();
             worldY += speed * deltaT * direction.y();
-            speed += 0.00001 * deltaT;
+            speed += 0.00001f * deltaT;
         }
     }
 }
@@ -239,7 +243,7 @@ void HealSpell::cast(Character* caster){
     if(ready() && caster->getMana() >= manaCost){
         caster->drainMana(manaCost);
 
-        HealEffect* effect = new HealEffect(caster, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
+        new HealEffect(caster, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
 
         cooldownTimer = cooldown;
     }
@@ -271,8 +275,8 @@ void DarkbeadSpell::cast(Character* caster, float worldX, float worldY){
 
         QVector2D dir = (QVector2D(worldX, worldY) - caster->getWorldCoords()).normalized();
         for(int i = -1; i <= 1; i++){
-            float dirX = dir.x() * cos(2*i*M_PI/9) - dir.y() * sin(2*i*M_PI/9);
-            float dirY = dir.x() * sin(2*i*M_PI/9) + dir.y() * cos(2*i*M_PI/9);
+            float dirX = dir.x() * float(cos(2*i*M_PI/9)) - dir.y() * float(sin(2*i*M_PI/9));
+            float dirY = dir.x() * float(sin(2*i*M_PI/9)) + dir.y() * float(cos(2*i*M_PI/9));
             new DarkbeadEffect(caster, dirX, dirY, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
         }
         cooldownTimer = cooldown;
@@ -282,6 +286,8 @@ void DarkbeadSpell::cast(Character* caster, float worldX, float worldY){
 DarkbeadEffect::DarkbeadEffect(Character* caster, float directionX, float directionY, Animator animator, Map* m)
     : SpellEffect(caster, animator, m, caster->getWorldCoords().x(), caster->getWorldCoords().y())
 {
+    Engine::getInstance().playSound("./Assets/Sounds/Darkbead.wav");
+
     this->direction = QVector2D(directionX, directionY);
 
     m->addItem(this);
@@ -316,8 +322,8 @@ void FlamethrowerSpell::cast(Character* caster, float worldX, float worldY){
 
         QVector2D dir = (QVector2D(worldX, worldY) - caster->getWorldCoords()).normalized();
         for(int i = 0; i < 5; i++){
-            float dirX = caster->getWorldCoords().x() + (i+1)*0.5*dir.x();
-            float dirY = caster->getWorldCoords().y() + (i+1)*0.5*dir.y();
+            float dirX = caster->getWorldCoords().x() + (i+1)*dir.x()*0.5f;
+            float dirY = caster->getWorldCoords().y() + (i+1)*dir.y()*0.5f;
             new FlamethrowerEffect(caster, dirX, dirY, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
         }
         cooldownTimer = cooldown;
@@ -327,6 +333,8 @@ void FlamethrowerSpell::cast(Character* caster, float worldX, float worldY){
 FlamethrowerEffect::FlamethrowerEffect(Character* caster, float posX, float posY, Animator animator, Map* m)
     : SpellEffect(caster, animator, m, posX, posY)
 {
+    Engine::getInstance().playSound("./Assets/Sounds/Flamethrower.mp3");
+
     for(int i = 0; i < m->numberOfEnemies(); i++){
         Character* enemy = m->getEnemy(i);
         if((QVector2D(worldX, worldY) - enemy->getWorldCoords()).length() <= radius){
@@ -352,7 +360,7 @@ void SlowSpell::cast(Character* caster, float worldX, float worldY){
     if(ready() && caster->getMana() >= manaCost && (caster->getWorldCoords() - QVector2D(worldX, worldY)).length() < range){
         caster->drainMana(manaCost);
 
-        SlowEffect* effect = new SlowEffect(caster, worldX, worldY, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
+        new SlowEffect(caster, worldX, worldY, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
 
         cooldownTimer = cooldown;
     }
@@ -361,13 +369,15 @@ void SlowSpell::cast(Character* caster, float worldX, float worldY){
 SlowEffect::SlowEffect(Character* caster, float worldX, float worldY, Animator animator, Map* m)
     : SpellEffect(caster, animator, m, worldX, worldY)
 {
+    Engine::getInstance().playSound("./Assets/Sounds/Slow.mp3");
+
     m->addItem(this);
     m->addSpell(this);
 }
 
 void SlowEffect::update(int deltaT){
     SpellEffect::update(deltaT);
-    setZValue(worldX + worldY + 2);
+    setZValue(double(worldX + worldY + 2));
 
     for(int i = 0; i < m->numberOfEnemies(); i++){
         Character* enemy = m->getEnemy(i);
@@ -387,7 +397,7 @@ void SilenceSpell::cast(Character* caster, float worldX, float worldY){
     if(ready() && caster->getMana() >= manaCost && (caster->getWorldCoords() - QVector2D(worldX, worldY)).length() < range){
         caster->drainMana(manaCost);
 
-        SilenceEffect* effect = new SilenceEffect(caster, worldX, worldY, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
+        new SilenceEffect(caster, worldX, worldY, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
 
         cooldownTimer = cooldown;
     }
@@ -396,6 +406,8 @@ void SilenceSpell::cast(Character* caster, float worldX, float worldY){
 SilenceEffect::SilenceEffect(Character* caster, float worldX, float worldY, Animator animator, Map* m)
     : SpellEffect(caster, animator, m, worldX, worldY)
 {
+    Engine::getInstance().playSound("./Assets/Sounds/Silence.mp3");
+
     for(int i = 0; i < m->numberOfEnemies(); i++){
         Character* enemy = m->getEnemy(i);
         QVector2D enemyPos = enemy->getWorldCoords();
@@ -412,7 +424,7 @@ SilenceEffect::SilenceEffect(Character* caster, float worldX, float worldY, Anim
 
 void SilenceEffect::update(int deltaT){
     SpellEffect::update(deltaT);
-    setZValue(worldX + worldY + 2);
+    setZValue(double(worldX + worldY + 2));
 
     timer -= deltaT;
     if(timer <= 0){
@@ -425,7 +437,7 @@ void ShieldSpell::cast(Character* caster){
     if(ready() && caster->getMana() >= manaCost){
         caster->drainMana(manaCost);
 
-        ShieldEffect* effect = new ShieldEffect(caster, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
+        new ShieldEffect(caster, Engine::getInstance().getAssetSpell(animIndex), caster->getMap());
 
         cooldownTimer = cooldown;
     }

@@ -38,5 +38,9 @@
         <file>Assets/UI/Icons/shield.png</file>
         <file>Assets/UI/Icons/silence.png</file>
         <file>Assets/UI/Icons/slow.png</file>
+        <file>Assets/UI/LoadingScreen.gif</file>
+        <file>Assets/UI/button.png</file>
+        <file>Assets/UI/MainMenu.jpg</file>
+        <file>Assets/UI/Hack.png</file>
     </qresource>
 </RCC>

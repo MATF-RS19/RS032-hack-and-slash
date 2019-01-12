@@ -1,13 +1,13 @@
 #include <QApplication>
+#include "MainWindow.h"
 
 #include "Engine.h"
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]){
     QApplication a(argc, argv);
 
-    Engine& engine = Engine::getInstance();
-    engine.run();
+    MainWindow w;
+    w.showWindow();
 
     return a.exec();
 }

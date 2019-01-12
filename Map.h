@@ -35,7 +35,6 @@ public:
     void keyPressEvent(QKeyEvent* event) override;
     void update(int deltaT);
     Player* getPlayer();
-    void setCam(Camera* camera);
 
     void destroyEnemy(Enemy* enemy);
     void destroySpell(SpellEffect* spell);
@@ -45,8 +44,10 @@ public:
     void setInputState(InputState state, int spell);
     Character* getEnemy(int i);
     int numberOfEnemies();
+    void loadMap(QString levelName);
+    void clearMap();
 
-    void createUi();
+    ~Map() override;
 
 private:
     QVector< QVector<int> > levelCollision;

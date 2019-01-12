@@ -7,6 +7,7 @@
 #include <QGraphicsRectItem>
 #include <QFile>
 #include <QDebug>
+#include <QApplication>
 #include <QKeyEvent>
 
 #include <cmath>
@@ -16,9 +17,14 @@
 #include "Player.h"
 #include "AnimatedItem.h"
 #include "Enemy.h"
+#include "UIController.h"
 #include "Spell.h"
 
 Map::Map(QString levelName){
+    loadMap(levelName);
+}
+
+void Map::loadMap(QString levelName) {
     QFile file(levelName);
     file.open(QIODevice::ReadOnly | QIODevice::Text);
 
@@ -54,7 +60,7 @@ Map::Map(QString levelName){
         for(int j = 0; j < n; j++){
             int x = list.at(j).toInt();
             if(x){
-                envItems.push_back(new AnimatedItem(Engine::getInstance().getAssetEnv(x - 1), mapToScene(matrixToMap(i, j)).x(), mapToScene(matrixToMap(i, j)).y(), matrixToMap(i,j).x() + matrixToMap(i, j).y()));
+                envItems.push_back(new AnimatedItem(Engine::getInstance().getAssetEnv(x - 1), int(mapToScene(matrixToMap(i, j)).x()), int(mapToScene(matrixToMap(i, j)).y()), int(matrixToMap(i,j).x() + matrixToMap(i, j).y())));
                 this->addItem((envItems[envItems.size() - 1]));
             }
         }
@@ -105,39 +111,48 @@ Map::Map(QString levelName){
         }
     }
 
+    file.close();
+
     for(int i = 0; i < texMap.length(); i++)
         for(int j = 0; j < texMap[i].length(); j++){
             QGraphicsPixmapItem* pic = this->addPixmap(Engine::getInstance().getAssetTiles(texMap[i][j]));
             pic->setOffset(-37, -19);
-            pic->setPos(mapToScene(matrixToMap(i, j)).x(), mapToScene(matrixToMap(i, j)).y());
+            pic->setPos(double(mapToScene(matrixToMap(i, j)).x()), double(mapToScene(matrixToMap(i, j)).y()));
             pic->setZValue(-1);
         }
-
 }
 
-void Map::createUi(){
-    QGraphicsRectItem* rect1 = new QGraphicsRectItem(-1280/2 + 10, -1024/2 + 10, player->getMaxHealth() * 5, 10);
-    rect1->setZValue(100000000);
-    rect1->setBrush(Qt::gray);
+void Map::clearMap(){
 
-    QGraphicsRectItem* hp = new QGraphicsRectItem(-1280/2 + 10, -1024/2 + 10, player->getHealth() * 5, 10);
-    hp->setBrush(Qt::red);
-    hp->setZValue(100000001);
+    removeItem(player);
+    delete player;
 
+    for(int i = 0; i < enemies.size(); i++){
+        removeItem(enemies[i]);
+        delete enemies[i];
+    }
 
-    QGraphicsRectItem* rect2 = new QGraphicsRectItem(-1280/2 + 10, -1024/2 + 10, player->getMaxMana() * 5, 10);
-    rect2->setBrush(Qt::gray);
-    rect2->setZValue(100000000);
-
-    QGraphicsRectItem* mana = new QGraphicsRectItem(-1280/2 + 10, -1024/2 + 25, player->getMana() * 5, 10);
-    mana->setBrush(Qt::blue);
-    mana->setZValue(100000001);
+    enemies.clear();
 
 
-    this->addItem(rect1);
-    this->addItem(hp);
-    this->addItem(rect2);
-    this->addItem(mana);
+    for(int i = 0; i < spells.size(); i++){
+        removeItem(spells[i]);
+        delete spells[i];
+    }
+    spells.clear();
+
+
+    for(int i = 0; i < envItems.size(); i++){
+        removeItem(envItems[i]);
+        delete envItems[i];
+    }
+    envItems.clear();
+
+    texMap.clear();
+    charCollision.clear();
+    levelCollision.clear();
+
+    clear();
 }
 
 Player* Map::getPlayer(){
@@ -169,14 +184,14 @@ int Map::getInputSpell(){
 void Map::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     if(inputState == normal && event->button() == Qt::MouseButton::LeftButton){
         QPointF pressPos = event->buttonDownScenePos(Qt::MouseButton::LeftButton);
-        QPair<int, int> newDest = mapToMatrix(QVector2D(0.5, 0.5) + sceneToMap(QVector2D(pressPos.x(), pressPos.y())));
+        QPair<int, int> newDest = mapToMatrix(QVector2D(0.5, 0.5) + sceneToMap(QVector2D(float(pressPos.x()), float(pressPos.y()))));
         player->setDestination(newDest.first, newDest.second);
         player->setTarget(nullptr);
     }
 
     if(inputState == targetMap && event->button() == Qt::MouseButton::RightButton) {
         QPointF pressPos = event->buttonDownScenePos(Qt::MouseButton::RightButton);
-        QVector2D tarPos = sceneToMap(QVector2D(pressPos.x(), pressPos.y()));
+        QVector2D tarPos = sceneToMap(QVector2D(float(pressPos.x()), float(pressPos.y())));
 
         player->Character::cast(inputSpell, tarPos.x(), tarPos.y());
 
@@ -203,8 +218,12 @@ void Map::keyPressEvent(QKeyEvent* event) {
     case Qt::Key::Key_5:
         player->cast(4);
         break;
-    case Qt::Key::Key_Escape:
+    case Qt::Key::Key_Q:
         inputState = normal;
+        break;
+    case Qt::Key::Key_Escape:
+        Engine::getInstance().endGame();
+        //QApplication::quit();
         break;
     }
 
@@ -218,8 +237,8 @@ QVector2D Map::mapToScene(QVector2D worldCoords){
 
     QVector2D translate = worldCoords - cameraPos;
 
-    float x = (translate.x() - translate.y())/sqrt(2);
-    float y = 0.5 * (translate.x() + translate.y())/sqrt(2);
+    float x = (translate.x() - translate.y())/float(sqrt(2));
+    float y = 0.5f * (translate.x() + translate.y())/float(sqrt(2));
     QVector2D vektor = QVector2D(x, y);
 
     vektor *= 50;
@@ -233,26 +252,22 @@ QVector2D Map::sceneToMap(QVector2D sceneCoords){
 
     QVector2D translate = sceneCoords - sceneCenter;
 
-    float x = (translate.x() + 2 * translate.y())/sqrt(2);
-    float y = (2 * translate.y() - translate.x())/sqrt(2);
+    float x = (translate.x() + 2 * translate.y())/float(sqrt(2));
+    float y = 2 * (translate.y() - translate.x())/float(sqrt(2));
 
     QVector2D vektor = QVector2D(x, y);
 
-    vektor *= 0.02;
+    vektor *= 0.02f;
 
     return vektor + cameraPos;
 }
 
 QVector2D Map::matrixToMap(int i, int j){
-    return QVector2D(j + 0.5, i + 0.5);
+    return QVector2D(float(j + 0.5), float(i + 0.5));
 }
 
 QPair<int, int> Map::mapToMatrix(QVector2D worldCoords){
-    return QPair<int, int>(worldCoords.y() - 0.5, worldCoords.x() - 0.5);
-}
-
-void Map::setCam(Camera *camera){
-    this->player->setCam(camera);
+    return QPair<int, int>(int(double(worldCoords.y()) - 0.5), int(double(worldCoords.x()) - 0.5));
 }
 
 void Map::moveCharacter(Character &ch, int destX, int destY){
@@ -309,6 +324,47 @@ Character* Map::getEnemy(int i){
 
 int Map::numberOfEnemies(){
     return enemies.size();
+}
+
+Map::~Map(){
+
+    qDebug() << player;
+    removeItem(player);
+    delete player;
+
+    qDebug() << enemies;
+    for(int i = 0; i < enemies.size(); i++){
+        removeItem(enemies[i]);
+        //qDebug() << enemies[i];
+        delete enemies[i];
+        //qDebug() << "mastan kurac";
+    }
+    //qDebug() << enemies.size();
+
+    enemies.clear();
+
+    qDebug() << enemies;
+
+    for(int i = 0; i < spells.size(); i++){
+        removeItem(spells[i]);
+        delete spells[i];
+    }
+    spells.clear();
+
+    qDebug() << "random ass bitch 2";
+
+    for(int i = 0; i < envItems.size(); i++){
+        removeItem(envItems[i]);
+        delete envItems[i];
+    }
+    envItems.clear();
+
+    qDebug() << "random ass bitch";
+
+    clear();
+
+    qDebug() << "pizdurina";
+    //QGraphicsScene::~QGraphicsScene();
 }
 
 bool Map::exists(int i, int j){

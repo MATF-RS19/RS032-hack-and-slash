@@ -23,7 +23,7 @@ void Enemy::update(int deltaT){
 
     Player* player = world->getPlayer();
 
-    float dist = sqrt(pow(player->getI() - getI(),2) + pow(player->getJ() - getJ(), 2));
+    float dist = float(sqrt(pow(player->getI() - getI(),2) + pow(player->getJ() - getJ(), 2)));
 
     if(dist < aggroRange)
         target = player;

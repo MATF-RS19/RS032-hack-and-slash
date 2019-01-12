@@ -41,6 +41,8 @@ public:
     int getMaxMana();
     void setShield(bool shield);
 
+    virtual ~Character();
+
 protected:
     Map* world;
 
@@ -50,11 +52,11 @@ protected:
     float defaultSpeed;
     int orientation;
 
-    int mapI, mapJ;         // koordinate polja matrice
-    int destI, destJ;       // tamo gde treba doci
+    int mapI, mapJ;
+    int destI, destJ;
 
 
-    int size;               // broj kvadrat
+    int size;
     enum State{
         moving,
         ready,
@@ -71,8 +73,8 @@ protected:
     QVector<Spell*> spells;
 
     float attackRange;
-    float attackCooldown;
-    float attackTimer;
+    int attackCooldown;
+    int attackTimer;
 
     int health;
     int maxHealth;

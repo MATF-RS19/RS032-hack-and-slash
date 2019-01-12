@@ -3,6 +3,7 @@
 
 #include <QLabel>
 #include <QGraphicsItem>
+#include <QButtonGroup>
 
 #include "Player.h"
 #include "Map.h"
@@ -23,7 +24,8 @@ public:
     void update(int deltaT);
     void newCombatText(int amount, bool dmg, float worldX, float worldY);
     void destroyCombatText(CombatText* text);
-    void setMap(Map* m);
+    void reset();
+    void load();
 
     UIController(UIController const&) = delete;
     void operator = (UIController const&) = delete;
@@ -31,7 +33,6 @@ public:
 private:
     UIController();
 
-    Map* m;
     QGraphicsRectItem* healthbarfull;
     QGraphicsRectItem* healthbar;
     QGraphicsRectItem* manabarfull;

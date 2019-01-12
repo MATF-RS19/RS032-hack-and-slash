@@ -5,6 +5,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QPixmap>
+#include <QtMultimedia/QMediaPlayer>
 
 #include <tuple>
 
@@ -12,6 +13,7 @@
 #include "Camera.h"
 #include "Animator.h"
 #include "Character.h"
+#include "MainWindow.h"
 #include "Player.h"
 
 struct CharTemplate;
@@ -28,6 +30,11 @@ public:
     Animator getAssetSpell(int i);
     Spell* getSpell(int i);
     Map* getMap();
+    void setMainWindow(MainWindow* w);
+    Camera* getCam();
+    void endGame();
+    void playSound(QString path, int volume = 50);
+    void stopSound();
 
     Engine(Engine const&) = delete;
     void operator = (Engine const&) = delete;
@@ -35,18 +42,22 @@ public:
 public slots:
     void update();
 private:
-    //QGraphicsView* view;
     Engine(){}
 
-    Map* m;
-    Player* ch;
-    Camera* cam;
+    MainWindow* w;
+
+    Map* m = nullptr;
+    Camera* cam = nullptr;
+
+    QTimer* timer = nullptr;
 
     QVector<CharTemplate> charTemplates;
     QVector<QPixmap> assetsTiles;
     QVector<Animator> assetsAnims;
     QVector<Animator> assetsEnv;
     QVector<Animator> assetsSpells;
+
+    QMediaPlayer* sound;
 };
 
 struct CharTemplate{
@@ -68,6 +79,7 @@ struct CharTemplate{
     int aggroRange = 0;
     int deaggroRange = 0;
     QVector<int> spells = QVector<int>();
+
 };
 
 struct SpellInfo{
