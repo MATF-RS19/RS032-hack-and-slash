@@ -29,7 +29,11 @@ LoadingScreen::~LoadingScreen()
     delete ui;
 }
 
+void LoadingScreen::setPlayer(int p) {
+    player = p;
+}
+
 void LoadingScreen::load() {
-    Engine::getInstance().run();
+    Engine::getInstance().run(player);
     close();
 }

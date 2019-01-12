@@ -9,7 +9,7 @@
 #include "Engine.h"
 #include "UIController.h"
 
-Character::Character(Map* world, int health, float speed, int size, int coordI, int coordJ, Animator animator, QVector<Spell*> spells): QGraphicsPixmapItem (){
+Character::Character(Map* world, int health, int mana, float attackRange, int attackCooldown, int attackDmg, float speed, int size, int coordI, int coordJ, Animator animator, QVector<Spell*> spells): QGraphicsPixmapItem (){
     this->setPixmap(animator.getCurrentFrame());
 
     this->world = world;
@@ -32,15 +32,15 @@ Character::Character(Map* world, int health, float speed, int size, int coordI, 
     this->size = size;
 
     orientation = 0;
-    attackRange = 1.5;
-    attackCooldown = 2000;
-    attackTimer = 0;
 
     this->health = health;
     maxHealth = health;
-    mana = 70;
-    maxMana = 70;
-    attackDmg = 10;
+    this->mana = mana;
+    maxMana = mana;
+    this->attackDmg = attackDmg;
+    this->attackRange = attackRange; //1.5;
+    this->attackCooldown = attackCooldown; // = 2000;
+    attackTimer = 0;
 
     this->spells = spells;
 
@@ -213,6 +213,12 @@ void Character::drainMana(int amount) {
     mana -= amount;
     if(mana < 0)
         mana = 0;
+}
+
+void Character::gainMana(int amount) {
+    mana += amount;
+    if(mana > maxMana)
+        mana = maxMana;
 }
 
 void Character::heal(int hp){

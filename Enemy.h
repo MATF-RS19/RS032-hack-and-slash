@@ -8,7 +8,7 @@
 
 class Enemy: public Character{
 public:
-    Enemy(Map* m, int health, float speed, int size, QVector< QPair<int, int> > patrolRoute, int aggroRange, int deaggroRange, Animator anim, QVector<Spell*> spells);
+    Enemy(Map* m, int health, int mana, float attackRange, int attackCooldown, int attackDmg, float speed, int size, QVector< QPair<int, int> > patrolRoute, int aggroRange, int deaggroRange, Animator anim, QVector<Spell*> spells);
     void update(int deltaT) override;
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 

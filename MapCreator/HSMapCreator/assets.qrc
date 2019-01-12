@@ -1,0 +1,75 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Assets/Animations/bat.png</file>
+        <file>Assets/Animations/CharacterAsset8x58.png</file>
+        <file>Assets/Animations/CharacterAsset8x58Blue.png</file>
+        <file>Assets/Animations/knight.png</file>
+        <file>Assets/Animations/swordsman.png</file>
+        <file>Assets/Environment/Campfire.png</file>
+        <file>Assets/Environment/cvet1.png</file>
+        <file>Assets/Environment/cvet2.png</file>
+        <file>Assets/Environment/cvet3.png</file>
+        <file>Assets/Environment/cvet4.png</file>
+        <file>Assets/Environment/cvet5.png</file>
+        <file>Assets/Environment/hemlock_pine.png</file>
+        <file>Assets/Environment/lebanon_cedar.png</file>
+        <file>Assets/Environment/stone_pine.png</file>
+        <file>Assets/Environment/zid cigla.png</file>
+        <file>Assets/Environment/zid sa zelenim.png</file>
+        <file>Assets/Environment/zid.png</file>
+        <file>Assets/Environment/zid2.png</file>
+        <file>Assets/Environment/zid3.png</file>
+        <file>Assets/Sounds/Click.ogg</file>
+        <file>Assets/Sounds/Click.wav</file>
+        <file>Assets/Sounds/Darkbead.mp3</file>
+        <file>Assets/Sounds/Darkbead.wav</file>
+        <file>Assets/Sounds/Darkorbs.mp3</file>
+        <file>Assets/Sounds/FireballCast.wav</file>
+        <file>Assets/Sounds/FireballImpact.wav</file>
+        <file>Assets/Sounds/Firestorm.wav</file>
+        <file>Assets/Sounds/Flamethrower.mp3</file>
+        <file>Assets/Sounds/MenuTheme.mp3</file>
+        <file>Assets/Sounds/Silence.mp3</file>
+        <file>Assets/Sounds/Slow.mp3</file>
+        <file>Assets/Sounds/SwordSwipe.mp3</file>
+        <file>Assets/Spells/darkbead.png</file>
+        <file>Assets/Spells/darkfog.png</file>
+        <file>Assets/Spells/darkorbs.png</file>
+        <file>Assets/Spells/fireball.png</file>
+        <file>Assets/Spells/firestorm.png</file>
+        <file>Assets/Spells/flamethrower.png</file>
+        <file>Assets/Spells/heal.png</file>
+        <file>Assets/Spells/shield.png</file>
+        <file>Assets/Spells/silence.png</file>
+        <file>Assets/Spells/slow.png</file>
+        <file>Assets/Tiles/DirtDark.png</file>
+        <file>Assets/Tiles/Grass.png</file>
+        <file>Assets/Tiles/Plava kocka.png</file>
+        <file>Assets/Tiles/Plavakocka.png</file>
+        <file>Assets/Tiles/podloga siva.png</file>
+        <file>Assets/Tiles/Sivakocka.png</file>
+        <file>Assets/Tiles/zemlja.png</file>
+        <file>Assets/UI/Icons/darkbead.png</file>
+        <file>Assets/UI/Icons/darkfog.png</file>
+        <file>Assets/UI/Icons/darkorbs.png</file>
+        <file>Assets/UI/Icons/fireball.png</file>
+        <file>Assets/UI/Icons/firestorm.png</file>
+        <file>Assets/UI/Icons/flamethrower.png</file>
+        <file>Assets/UI/Icons/heal.png</file>
+        <file>Assets/UI/Icons/shield.png</file>
+        <file>Assets/UI/Icons/silence.png</file>
+        <file>Assets/UI/Icons/slow.png</file>
+        <file>Assets/UI/button.png</file>
+        <file>Assets/UI/Hack.png</file>
+        <file>Assets/UI/LoadingScreen.gif</file>
+        <file>Assets/UI/MainMenu.jpg</file>
+        <file>Assets/UI/spellbar.png</file>
+        <file>Assets/UI/spellbarbg.png</file>
+        <file>Assets/anim.hsa</file>
+        <file>Assets/chars.hsa</file>
+        <file>Assets/env.hsa</file>
+        <file>Assets/spells.hsa</file>
+        <file>Assets/tiles.hsa</file>
+        <file>Levels/test.hsl</file>
+    </qresource>
+</RCC>

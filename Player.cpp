@@ -10,6 +10,13 @@
 void Player::update(int deltaT){
     Character::update(deltaT);
 
+    regenTimer -= deltaT;
+    if(regenTimer <= 0) {
+        regenTimer = regenCooldown;
+        heal(1);
+        gainMana(1);
+    }
+
     if(charState == dead){
         Engine::getInstance().endGame();
         return;
@@ -19,7 +26,7 @@ void Player::update(int deltaT){
 }
 
 void Player::cast(int i) {
-    if(spells[i]->ready() && spells[i]->getManaCost() <= mana) {
+    if(i < spells.count() && spells[i]->ready() && spells[i]->getManaCost() <= mana) {
         switch(spells[i]->getType()) {
         case Spell::noTarget:
             spells[i]->cast(this);

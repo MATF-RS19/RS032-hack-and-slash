@@ -42,5 +42,18 @@
         <file>Assets/UI/button.png</file>
         <file>Assets/UI/MainMenu.jpg</file>
         <file>Assets/UI/Hack.png</file>
+        <file>Assets/Animations/bat.png</file>
+        <file>Assets/Animations/CharacterAsset8x58Blue.png</file>
+        <file>Assets/Animations/knight.png</file>
+        <file>Assets/Animations/swordsman.png</file>
+        <file>Levels/level1.hsl</file>
+        <file>Assets/Tiles/podloga siva.png</file>
+        <file>Assets/Tiles/zemlja.png</file>
+        <file>Assets/Environment/cvet1.png</file>
+        <file>Assets/Environment/cvet2.png</file>
+        <file>Assets/Environment/cvet3.png</file>
+        <file>Assets/Environment/cvet4.png</file>
+        <file>Assets/Environment/cvet5.png</file>
+        <file>Assets/UI/Slash.png</file>
     </qresource>
 </RCC>

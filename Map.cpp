@@ -20,11 +20,11 @@
 #include "UIController.h"
 #include "Spell.h"
 
-Map::Map(QString levelName){
-    loadMap(levelName);
+Map::Map(QString levelName, int p){
+    loadMap(levelName, p);
 }
 
-void Map::loadMap(QString levelName) {
+void Map::loadMap(QString levelName, int p) {
     QFile file(levelName);
     file.open(QIODevice::ReadOnly | QIODevice::Text);
 
@@ -76,10 +76,11 @@ void Map::loadMap(QString levelName) {
 
     for(int i = 0; i < s; i++){
         line = file.readLine().trimmed();
+        qDebug() << line;
         list = line.split(" ");
         int x = list.at(0).toInt();
         if(x == 1){
-            CharTemplate character = Engine::getInstance().getTemplate(0);
+            CharTemplate character = Engine::getInstance().getTemplate(p);
             int posI = list.at(1).toInt();
             int posJ = list.at(2).toInt();
 
@@ -87,23 +88,23 @@ void Map::loadMap(QString levelName) {
             for(int j = 0; j < character.spells.size(); j++)
                 spells.push_back(Engine::getInstance().getSpell(character.spells[j]));
 
-            player = new Player(this, character.health, character.speed, character.size, posI, posJ, Engine::getInstance().getAssetAnim(character.animIndex), spells);
+            player = new Player(this, character.health, character.mana, character.attackRange, character.attackCooldown, character.attackDmg, character.speed, character.size, posI, posJ, Engine::getInstance().getAssetAnim(character.animIndex), spells);
             addItem(player);
             charCollision[posI][posJ] = 1;
         }
         else {
             CharTemplate character = Engine::getInstance().getTemplate(x);
-            int count = list.at(1).toInt();
+            //int count = list.at(1).toInt();
 
             QVector< QPair<int, int> > route;
-            for(int j = 0; j < count; j++)
-                route.push_back(QPair<int, int>(list.at(2+2*j).toInt(), list.at(3+2*j).toInt()));
+            for(int j = 1; j < list.count(); j += 2)
+                route.push_back(QPair<int, int>(list.at(j).toInt(), list.at(j + 1).toInt()));
 
             QVector<Spell*> spells;
             for(int j = 0; j < character.spells.size(); j++)
                 spells.push_back(Engine::getInstance().getSpell(character.spells[j]));
 
-            enemies.push_back(new Enemy(this, character.health, character.speed, character.size, route, character.aggroRange, character.deaggroRange, Engine::getInstance().getAssetAnim(character.animIndex), spells));
+            enemies.push_back(new Enemy(this, character.health, character.mana, character.attackRange, character.attackCooldown, character.attackDmg, character.speed, character.size, route, character.aggroRange, character.deaggroRange, Engine::getInstance().getAssetAnim(character.animIndex), spells));
             addItem(enemies[enemies.size() - 1]);
             for(int k = 0; k < character.size; k++)
                 for(int l = 0; l < character.size; l++)
@@ -184,7 +185,7 @@ int Map::getInputSpell(){
 void Map::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     if(inputState == normal && event->button() == Qt::MouseButton::LeftButton){
         QPointF pressPos = event->buttonDownScenePos(Qt::MouseButton::LeftButton);
-        QPair<int, int> newDest = mapToMatrix(QVector2D(0.5, 0.5) + sceneToMap(QVector2D(float(pressPos.x()), float(pressPos.y()))));
+        QPair<int, int> newDest = mapToMatrix(QVector2D(0.5, 0.5) + sceneToMap(QVector2D(pressPos.x(), pressPos.y())));
         player->setDestination(newDest.first, newDest.second);
         player->setTarget(nullptr);
     }
@@ -232,13 +233,13 @@ void Map::keyPressEvent(QKeyEvent* event) {
 }
 
 QVector2D Map::mapToScene(QVector2D worldCoords){
-    QVector2D cameraPos = QVector2D(1.5, 1.5);
-    QVector2D sceneCenter = QVector2D(150, 150);
+    QVector2D cameraPos = QVector2D(0, 0);
+    QVector2D sceneCenter = QVector2D(0, 0);
 
     QVector2D translate = worldCoords - cameraPos;
 
-    float x = (translate.x() - translate.y())/float(sqrt(2));
-    float y = 0.5f * (translate.x() + translate.y())/float(sqrt(2));
+    float x = (translate.x() - translate.y())/sqrt(2);
+    float y = 0.5f * (translate.x() + translate.y())/sqrt(2);
     QVector2D vektor = QVector2D(x, y);
 
     vektor *= 50;
@@ -247,13 +248,13 @@ QVector2D Map::mapToScene(QVector2D worldCoords){
 }
 
 QVector2D Map::sceneToMap(QVector2D sceneCoords){
-    QVector2D cameraPos = QVector2D(1.5, 1.5);
-    QVector2D sceneCenter = QVector2D(150, 150);
+    QVector2D cameraPos = QVector2D(0, 0);
+    QVector2D sceneCenter = QVector2D(0, 0);
 
     QVector2D translate = sceneCoords - sceneCenter;
 
-    float x = (translate.x() + 2 * translate.y())/float(sqrt(2));
-    float y = 2 * (translate.y() - translate.x())/float(sqrt(2));
+    float x = (translate.x() + 2 * translate.y())/sqrt(2);
+    float y = (2 * translate.y() - translate.x())/sqrt(2);
 
     QVector2D vektor = QVector2D(x, y);
 
@@ -263,11 +264,11 @@ QVector2D Map::sceneToMap(QVector2D sceneCoords){
 }
 
 QVector2D Map::matrixToMap(int i, int j){
-    return QVector2D(float(j + 0.5), float(i + 0.5));
+    return QVector2D(j + 0.5, i + 0.5);
 }
 
 QPair<int, int> Map::mapToMatrix(QVector2D worldCoords){
-    return QPair<int, int>(int(double(worldCoords.y()) - 0.5), int(double(worldCoords.x()) - 0.5));
+    return QPair<int, int>(worldCoords.y() - 0.5, worldCoords.x() - 0.5);
 }
 
 void Map::moveCharacter(Character &ch, int destX, int destY){

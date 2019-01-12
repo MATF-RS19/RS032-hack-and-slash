@@ -22,7 +22,7 @@ class Engine : public QObject {
     Q_OBJECT
 public:
     static Engine& getInstance();
-    void run();
+    void run(int player);
     QPixmap getAssetTiles(int i);
     Animator getAssetEnv(int i);
     CharTemplate getTemplate(int i);
@@ -62,10 +62,14 @@ private:
 
 struct CharTemplate{
     CharTemplate() {}
-    CharTemplate(int animIndex, int size, int health, float speed, int aggroRange, int deaggroRange, QVector<int> spells){
+    CharTemplate(int animIndex, int size, int health, int mana, float attackRange, int attackCooldown, int attackDmg, float speed, int aggroRange, int deaggroRange, QVector<int> spells){
         this->animIndex = animIndex;
         this->size = size;
         this->health = health;
+        this->mana = mana;
+        this->attackRange = attackRange;
+        this->attackCooldown = attackCooldown;
+        this->attackDmg = attackDmg;
         this->speed = speed;
         this->aggroRange = aggroRange;
         this->deaggroRange = deaggroRange;
@@ -75,6 +79,10 @@ struct CharTemplate{
     int animIndex = 0;
     int size = 0;
     int health = 0;
+    int mana = 0;
+    float attackRange = 0;
+    int attackCooldown = 0;
+    int attackDmg = 0;
     float speed = 0;
     int aggroRange = 0;
     int deaggroRange = 0;

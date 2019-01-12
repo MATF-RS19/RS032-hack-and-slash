@@ -12,7 +12,7 @@
 
 class Character : public QGraphicsPixmapItem{
 public:
-    Character(Map* world, int health, float speed, int size, int coordI, int coordJ, Animator animator, QVector<Spell*> spells);
+    Character(Map* world, int health, int mana, float attackRange, int attackCooldown, int attackDmg, float speed, int size, int coordI, int coordJ, Animator animator, QVector<Spell*> spells);
     virtual void update(int deltaT);
     int getI();
     int getJ();
@@ -29,6 +29,7 @@ public:
     void cast(int i, float worldX, float worldY);
     int getMana();
     void drainMana(int amount);
+    void gainMana(int amount);
     void heal(int hp);
     int getHealth();
     void setSpeed(float v);

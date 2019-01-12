@@ -14,11 +14,15 @@ class LoadingScreen : public QMainWindow
 public:
     explicit LoadingScreen(QWidget *parent = nullptr);
     ~LoadingScreen();
+
+    void setPlayer(int p);
 private slots:
     void load();
 
 private:
     Ui::LoadingScreen *ui;
+
+    int player;
 };
 
 #endif // LOADINGSCREEN_H

@@ -22,7 +22,7 @@ public:
         targetMap
     };
 
-    Map(QString levelName);
+    Map(QString levelName, int p);
     QPair<int, int> findPath(Character& ch, int destX, int destY);
     bool exists(int i, int j);
     void moveCharacter(Character& ch, int destX, int destY);
@@ -44,7 +44,7 @@ public:
     void setInputState(InputState state, int spell);
     Character* getEnemy(int i);
     int numberOfEnemies();
-    void loadMap(QString levelName);
+    void loadMap(QString levelName, int p);
     void clearMap();
 
     ~Map() override;

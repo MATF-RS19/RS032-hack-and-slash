@@ -15,7 +15,7 @@
 #include "Spell.h"
 #include "UIController.h"
 
-void Engine::run() {
+void Engine::run(int player) {
     stopSound();
 
     QFile fileTiles(":/Assets/tiles.hsa");
@@ -103,13 +103,17 @@ void Engine::run() {
         int animIndex = args[0].toInt();
         int size = args[1].toInt();
         int health = args[2].toInt();
-        float speed = args[3].toFloat();
-        int aggroRange = args[4].toInt();
-        int deaggroRange = args[5].toInt();
+        int mana = args[3].toInt();
+        float attackRange = args[4].toFloat();
+        int attackCooldown = args[5].toInt();
+        int attackDmg = args[6].toInt();
+        float speed = args[7].toFloat();
+        int aggroRange = args[8].toInt();
+        int deaggroRange = args[9].toInt();
         QVector<int> spells;
-        for(int i = 6; i < args.size(); i++)
+        for(int i = 10; i < args.size(); i++)
             spells.push_back(args[i].toInt());
-        charTemplates.push_back(CharTemplate(animIndex, size, health, speed, aggroRange, deaggroRange, spells));
+        charTemplates.push_back(CharTemplate(animIndex, size, health, mana, attackRange, attackCooldown, attackDmg, speed, aggroRange, deaggroRange, spells));
     }
 
     QFile fileSpells(":/Assets/spells.hsa");
@@ -138,19 +142,20 @@ void Engine::run() {
     fileSpells.close();
 
     if(!m)
-        m = new Map(":/Levels/test.hsl");
+        m = new Map(":/Levels/level1.hsl", player);
     else
-        m->loadMap(":/Levels/test.hsl");
+        m->loadMap(":/Levels/level1.hsl", player);
 
     if(!cam)
-        cam = new Camera(m, 20, 20);
+        cam = new Camera(m, 300, 300);
     else
         cam->setScene(m);
 
     cam->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     cam->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     cam->showFullScreen();
-    m->setSceneRect(-1280/2, -1024/2, 1280, 1024);
+    cam->setBackgroundBrush(Qt::black);
+    m->setSceneRect(-cam->width(), -cam->height(), 2*cam->width(), 2*cam->height());
 
     UIController::getInstance().load();
 
@@ -217,17 +222,17 @@ void Engine::setMainWindow(MainWindow* w){
 
 void Engine::endGame(){
     timer->stop();
-    //delete timer;
 
     UIController::getInstance().reset();
 
-    cam->setScene(0);
+    cam->setScene(nullptr);
     cam->hide();
     //m->clear();
     m->clearMap();
     //m = nullptr;
     //delete m;
 
+    qDebug() << "a";
     //delete m;
     //delete cam;
 

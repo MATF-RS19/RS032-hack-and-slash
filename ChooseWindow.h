@@ -19,6 +19,8 @@ private slots:
     void on_hackButton_clicked();
 
 
+    void on_slashButton_clicked();
+
 private:
     Ui::ChooseWindow *ui;
 };
