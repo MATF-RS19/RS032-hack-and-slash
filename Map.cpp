@@ -294,6 +294,8 @@ void Map::update(int deltaT){
         enemies[i]->update(deltaT);
     for(int i = 0; i < envItems.size(); i++)
         envItems[i]->update(deltaT);
+
+
 }
 
 void Map::destroyEnemy(Enemy *enemy){

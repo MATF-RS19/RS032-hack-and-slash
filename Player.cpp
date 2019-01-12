@@ -18,6 +18,8 @@ void Player::update(int deltaT){
     }
 
     if(charState == dead){
+        if(target)
+            target = nullptr;
         Engine::getInstance().endGame();
         return;
     }
