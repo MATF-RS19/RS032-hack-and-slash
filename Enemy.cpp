@@ -2,7 +2,6 @@
 #include "Player.h"
 
 #include <cmath>
-#include <QDebug>
 
 Enemy::Enemy(Map* m, int health, int mana, float attackRange, int attackCooldown, int attackDmg, float speed, int size, QVector< QPair<int, int> > patrolRoute, int aggroRange, int deaggroRange, Animator anim, QVector<Spell*> spells)
     : Character (m, health, mana, attackRange, attackCooldown, attackDmg, speed, size, patrolRoute[0].first, patrolRoute[0].second, anim, spells)

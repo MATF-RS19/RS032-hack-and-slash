@@ -6,8 +6,6 @@
 
 #include "Engine.h"
 
-#include <QDebug>
-
 ChooseWindow::ChooseWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ChooseWindow)

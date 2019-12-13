@@ -4,7 +4,6 @@
 #include <QGraphicsView>
 #include <QTimer>
 #include <QTransform>
-#include <QDebug>
 #include <QFile>
 #include <QtMultimedia/QMediaPlayer>
 #include <QUrl>
@@ -181,9 +180,7 @@ Animator Engine::getAssetEnv(int i){
 
 void Engine::update() {
     m->update(10);
-    qDebug() << "asdfasdf";
     UIController::getInstance().update(10);
-    qDebug() << "asdfasdfasdf";
     //scene->update();
 }
 
@@ -232,7 +229,6 @@ void Engine::endGame(){
     //m = nullptr;
     //delete m;
 
-    qDebug() << "a";
     //delete m;
     //delete cam;
 

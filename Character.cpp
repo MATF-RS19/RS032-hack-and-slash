@@ -1,8 +1,8 @@
 #include "Character.h"
 
-#include <QDebug>
 #include <QPointF>
 #include <QVector2D>
+#include <math.h>
 
 #include "Spell.h"
 #include "Map.h"

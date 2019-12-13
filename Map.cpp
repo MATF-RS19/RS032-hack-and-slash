@@ -6,7 +6,6 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsRectItem>
 #include <QFile>
-#include <QDebug>
 #include <QApplication>
 #include <QKeyEvent>
 
@@ -76,7 +75,6 @@ void Map::loadMap(QString levelName, int p) {
 
     for(int i = 0; i < s; i++){
         line = file.readLine().trimmed();
-        qDebug() << line;
         list = line.split(" ");
         int x = list.at(0).toInt();
         if(x == 1){
@@ -331,22 +329,14 @@ int Map::numberOfEnemies(){
 
 Map::~Map(){
 
-    qDebug() << player;
     removeItem(player);
     delete player;
 
-    qDebug() << enemies;
     for(int i = 0; i < enemies.size(); i++){
         removeItem(enemies[i]);
-        //qDebug() << enemies[i];
         delete enemies[i];
-        //qDebug() << "mastan kurac";
     }
-    //qDebug() << enemies.size();
-
     enemies.clear();
-
-    qDebug() << enemies;
 
     for(int i = 0; i < spells.size(); i++){
         removeItem(spells[i]);
@@ -354,19 +344,13 @@ Map::~Map(){
     }
     spells.clear();
 
-    qDebug() << "random ass bitch 2";
-
     for(int i = 0; i < envItems.size(); i++){
         removeItem(envItems[i]);
         delete envItems[i];
     }
     envItems.clear();
 
-    qDebug() << "random ass bitch";
-
     clear();
-
-    qDebug() << "pizdurina";
     //QGraphicsScene::~QGraphicsScene();
 }
 

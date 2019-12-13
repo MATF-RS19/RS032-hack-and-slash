@@ -1,6 +1,5 @@
 #include "Player.h"
 
-#include <QDebug>
 #include <cmath>
 
 #include "Camera.h"
